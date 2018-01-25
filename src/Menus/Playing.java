@@ -8,14 +8,19 @@ import jplay.GameImage;
 import Characters.Ninja;
 import Menus.PlayingMethods.PlayingDraw;
 import Menus.PlayingMethods.PlayingUpdate;
+import Plataform.Floor;
+import Plataform.Water;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.floor;
 import static Main.Main.keyboard;
-import static Main.Main.mouse;
 import static Main.Main.ninja;
+import static Main.Main.someMethods;
+import static Main.Main.water;
 import static Main.Main.window;
+
 
 //Others imports
 import com.sun.glass.events.KeyEvent;
@@ -28,27 +33,32 @@ import javax.swing.JOptionPane;
  */
 public class Playing {
     
-    //These variables is going to be used to initialize others variables
-    public final String FILE_WAY = "Images/Playing/";
-    
     //Java variables
-    public boolean isPlaying;
-    public double speed = 50;
+    public boolean allThreadsOk; //Some threads need wait all threads be create to do not have 'NullPointerException'
+    private boolean isPlaying;
+    private boolean floorOk;
+    private boolean ninjaOk;
+    private boolean waterOk;
+    private double speed = 50; //50
+    private double subSpeedMax;
+    private final String FILE_WAY = "Images/Playing/"; //These variables is going to be used to initialize others variables
     
     //Jplay variables
     public GameImage[] background;
     
-    //Methods
+    //Classe variables
     public PlayingDraw playingDraw;
     public PlayingUpdate playingUpdate;
     
     @SuppressWarnings("SleepWhileInLoop")
     public void Playing() {
         
-        background[3].y = window.getHeight() - background[3].height + 30;
-        background[2].y = window.getHeight() - background[2].height- 30;
-        background[1].y = window.getHeight() - background[1].height- 60;
-        background[0].y = window.getHeight() - background[0].height;
+        background[3].y = someMethods.SetPositionBelowWindow(background[3], window) + 30;
+        background[2].y = someMethods.SetPositionBelowWindow(background[2], window)- 30;
+        background[1].y = someMethods.SetPositionBelowWindow(background[1], window) - 60;
+        background[0].y = someMethods.SetPositionBelowWindow(background[0], window);
+        
+        subSpeedMax = 1 + ((background.length - 1) * 0.3);
         
         int line; //It is used in 'for'
         double subSpeed; //It is used to make the backgrounds move in different speed
@@ -88,12 +98,23 @@ public class Playing {
     /*----  Classe methods  ----*/
     @SuppressWarnings("SleepWhileInLoop")
     public void InitializeThreads() {
+        allThreadsOk = false;
+        floorOk = false;
+        ninjaOk = false;
+        waterOk = false;
+        
         ninja = new Ninja();
         ninja.start();
         
+        water = new Water();
+        water.start();
+        
+        floor = new Floor();
+        floor.start();
+        
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
-            if (ninja.getNinjaOk()) {
+            if (ninjaOk & floorOk & waterOk) {
                 break;
             }
             
@@ -103,6 +124,8 @@ public class Playing {
                 JOptionPane.showMessageDialog(null, "Maybe the game crash in loading because: " + ex.getMessage());
             }
         }
+        
+        allThreadsOk = true;
         
         playingDraw = new PlayingDraw();
         playingDraw.start();
@@ -133,5 +156,21 @@ public class Playing {
     
     public double GetSpeed() {
         return speed;
+    }
+    
+    public double GetSubSpeedMax() {
+        return subSpeedMax;
+    }
+    
+    public void SetFloorOk(boolean value) {
+        floorOk = value;
+    }
+    
+    public void SetNinjaOk(boolean value) {
+        ninjaOk = value;
+    }
+    
+    public void SetWaterOk(boolean value) {
+        waterOk = value;
     }
 }

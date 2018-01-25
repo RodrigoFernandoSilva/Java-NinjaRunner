@@ -3,7 +3,7 @@ package Characters;
 
 //Jplay imports
 import jplay.Animation;
-import jplay.GameImage;
+import jplay.Sprite;
 
 /**
  *
@@ -19,7 +19,7 @@ public class Characters extends Thread {
     
     //Jplay variables
     public Animation[] spriteSheet;
-    public GameImage soul;
+    public Sprite soul;
     
     /*----  Classe Methods  ----*/
     public void DrawSould() {
@@ -32,5 +32,9 @@ public class Characters extends Thread {
     
     public void UpdateSpriteSheet() {
         spriteSheet[spriteSheetEnable].update();
+    }
+    
+    public Sprite GetSoul() {
+        return soul;
     }
 }

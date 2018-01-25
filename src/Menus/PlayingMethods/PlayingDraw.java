@@ -6,6 +6,8 @@ import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.window;
 import static Main.Main.ninja;
 import static Main.Main.playing;
+import static Main.Main.floor;
+import static Main.Main.water;
 
 //Others imports
 import static java.lang.Thread.sleep;
@@ -25,8 +27,16 @@ public class PlayingDraw extends Thread {
             
             playing.DrawBackground();
             
+            water.DrawWater();
+            
+            floor.DrawLeftFloor();
+            floor.DrawRightFloor();
+            
             ninja.DrawSould();
-            ninja.DrawSpriteSheet();
+            //Only draw this sprite if the keyboard was not pressed, because after press it the
+            //sprite animation is changed and its position is reseted
+            if (!ninja.GetNinjaKeyboard().changeAnimation)
+                ninja.DrawSpriteSheet();
             
             window.update();
             

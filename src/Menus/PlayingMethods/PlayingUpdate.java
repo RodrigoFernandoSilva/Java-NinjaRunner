@@ -22,7 +22,8 @@ public class PlayingUpdate extends Thread {
         
         while (playing.GetIsPlaying()) {
             
-            ninja.UpdateSpriteSheet();
+            if (ninja.GetNinjaAnimation().CanUpdateSprite())
+                ninja.UpdateSpriteSheet();
             
             //This sleep is equals for all threads
             try {

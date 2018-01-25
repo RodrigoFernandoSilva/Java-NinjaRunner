@@ -14,6 +14,8 @@ import jplay.Window;
 //Classe imports
 import Characters.Ninja;
 import Menus.Playing;
+import Plataform.Floor;
+import Plataform.Water;
 
 //Others imports
 import com.sun.glass.events.KeyEvent;
@@ -35,7 +37,10 @@ public class Main {
     
     //Classe variables
     public static Ninja ninja;
+    public static Floor floor;
     public static Playing playing;
+    public static SomeMethods someMethods;
+    public static Water water;
     
     public static void main(String[] args) {
         
@@ -50,8 +55,18 @@ public class Main {
         
         //Add the keys that is going to be used on game
         keyboard.addKey(KeyEvent.VK_ESCAPE, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_SPACE, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_UP, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_DOWN, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_LEFT, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_RIGHT, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_Z, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_X, InputBase.DETECT_INITIAL_PRESS_ONLY);
         
-        //Creat the threads
+        //Create all variables methods
+        someMethods = new SomeMethods();
+        
+        //Create all threads
         DeltaTime deltaTime = new DeltaTime();
         deltaTime = new DeltaTime();
         
