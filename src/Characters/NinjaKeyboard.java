@@ -27,10 +27,16 @@ public class NinjaKeyboard extends Thread{
     public boolean isJumpAttack = false;
     public boolean isSliding = false;
     public boolean isGliding = false;
+    /**
+     *  Show if the ninja is attacking with any kind of attack.
+     */
+    public boolean isAnyAttack = false;
     
     public boolean animationTransition = false;
     public boolean changeAnimation = false;
-
+    public boolean keyUpIsDown = false;
+    public boolean keySpaceIsDown = false;
+    
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
@@ -39,28 +45,33 @@ public class NinjaKeyboard extends Thread{
         
         while (playing.GetIsPlaying()) {
             
-            if (keyboard.keyDown(KeyEvent.VK_UP)) {
+            keyUpIsDown = keyboard.keyDown(KeyEvent.VK_UP);
+            keySpaceIsDown = keyboard.keyDown(KeyEvent.VK_SPACE);
+            
+            if (keySpaceIsDown) {
+                if (!isAnyAttack & !isGliding & !ninja.soul.getOnFloor() & !changeAnimation & ninja.soul.getVelocityY() != 0) {
+                    SetFalseBoolean();
+                    isGliding = true;
+                    changeAnimation = true;
+                }
+            }
+            if (keyUpIsDown) {
                 //If the ninja jump during floor attack, the animation need be change to jump attack,
                 //but in the same frame
-                if (!changeAnimation & !animationTransition & (isRunAttack | isRunThrow)) {
+                if (!isJumping & !changeAnimation & !animationTransition & (isRunAttack | isRunThrow)) {
                     animationTransition = true;
                     ninja.soul.jumpWithoutPress();
-                } else if (isRunning | isRunAttack | isRunThrow) { //The ninja jumped but was not attacking
+                } else if (!isJumping & (isRunning | isRunAttack | isRunThrow | isSliding)) { //The ninja jumped but was not attacking
                     SetFalseBoolean();
                     isJumping = true;
                     changeAnimation = true;
                     ninja.soul.jumpWithoutPress();
                 }
-            } else if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
+            }
+            if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
                 if (!changeAnimation & isRunning) {
                     SetFalseBoolean();
                     isSliding = true;
-                    changeAnimation = true;
-                }
-            } else if (keyboard.keyDown(KeyEvent.VK_SPACE)) {
-                if (!changeAnimation & isJumping) {
-                    SetFalseBoolean();
-                    isGliding = true;
                     changeAnimation = true;
                 }
             } else if (keyboard.keyDown(KeyEvent.VK_X)) {
@@ -68,20 +79,24 @@ public class NinjaKeyboard extends Thread{
                     SetFalseBoolean();
                     isRunThrow = true;
                     changeAnimation = true;
+                    isAnyAttack = true;
                 } else if (!changeAnimation & isJumping) {
                     SetFalseBoolean();
                     isJumpThrow = true;
                     changeAnimation = true;
+                    isAnyAttack = true;
                 }
             } else if (keyboard.keyDown(KeyEvent.VK_Z)) {
                 if (!changeAnimation & isRunning) {
                     SetFalseBoolean();
                     isRunAttack = true;
                     changeAnimation = true;
+                    isAnyAttack = true;
                 } else if (!changeAnimation & isJumping) {
                     SetFalseBoolean();
                     isJumpAttack = true;
                     changeAnimation = true;
+                    isAnyAttack = true;
                 }
             }
             

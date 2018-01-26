@@ -16,6 +16,7 @@ public class Characters extends Thread {
     public int animationSpeed;
     public int[][] spriteAdjustX;
     public int[][] spriteAdjustY;
+    public double y;
     
     //Jplay variables
     public Animation[] spriteSheet;

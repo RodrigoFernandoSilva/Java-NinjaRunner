@@ -3,6 +3,7 @@ package Menus.PlayingMethods;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
+import static Main.Main.enemy;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 
@@ -24,6 +25,8 @@ public class PlayingUpdate extends Thread {
             
             if (ninja.GetNinjaAnimation().CanUpdateSprite())
                 ninja.UpdateSpriteSheet();
+            
+            enemy.UpdateSpriteSheet();
             
             //This sleep is equals for all threads
             try {

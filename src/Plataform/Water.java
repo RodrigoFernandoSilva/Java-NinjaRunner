@@ -30,7 +30,7 @@ public class Water extends Thread {
     private final String FILE_WAY = "Images/Plataform/";
     
     //Jplay variables
-    Animation water;
+    private Animation water;
     
     @Override
     @SuppressWarnings("SleepWhileInLoop")
@@ -40,7 +40,7 @@ public class Water extends Thread {
         water.y = someMethods.SetPositionBelowWindow(water, window) + 80;
         waterInitialPosition = water.y;
         
-        playing.SetWaterOk(true);
+        playing.waterOk = true;
         
         WaitAllThreadsFinish();
         

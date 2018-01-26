@@ -11,7 +11,6 @@ import static Main.DeltaTime.deltaTime;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
-import static Main.Main.window;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -28,12 +27,19 @@ public class Floor extends Thread {
     private int firstFloor;
     private int lastFloor;
     private int line;
+    private int[] floorBockNumber;
+    /**
+     * The first id of each line shows how many object this floor has and the second id of each
+     * line show which block type
+     */
+    private int[][] objectID;
     private final String FILE_WAY = "Images/Plataform/";
     private Random generator;
     
     //Jplay variables
-    Animation[] floorLeft;
-    GameImage floorRight;
+    private Animation[] floorLeft;
+    private GameImage floorRight;
+    private GameImage object;
     
     @Override
     @SuppressWarnings("SleepWhileInLoop")
@@ -42,6 +48,8 @@ public class Floor extends Thread {
         generator = new Random();
         
         floorLeft = new Animation[7];
+        floorBockNumber = new int[floorLeft.length];
+        objectID = new int[floorLeft.length][9];
         
         for (line = 0; line < floorLeft.length; line ++)
             floorLeft[line] = new Animation(FILE_WAY + "TiledMapLeft.png");
@@ -53,11 +61,9 @@ public class Floor extends Thread {
         
         InitializeFloors();
         
-        playing.SetFloorOk(true);
+        playing.floorOk = true;
         
-        WaitAllThreadsFinish();
-        
-        floorLeft[6].y = 100;
+        someMethods.WaitAllThreadsFinish();
         
         while (playing.GetIsPlaying()) {
             
@@ -67,7 +73,7 @@ public class Floor extends Thread {
             for (line = 0; line < floorLeft.length; line ++) {
                 floorLeft[line].x -= (speed) * deltaTime;
                 //Reposition the floor after it exit the window
-                if (someMethods.ExitWindow(floorLeft[line], floorRight.width))
+                if (someMethods.ExitWindow(floorLeft[line], floorRight.width * 3))
                     RepositionFloor(line);
             }
             
@@ -90,38 +96,118 @@ public class Floor extends Thread {
     }
     
     /*----  Classe methods  ----*/
-    private void WaitAllThreadsFinish() {
-        //Wait some threads be created for do not have 'NullPointerExeption'
-        while (true) {
-            if (playing.allThreadsOk) {
-                break;
-            }
-            
-            try { //If do not have this 'sleep' the 'while' maybe never will exit
-                sleep(100);
-            } catch (InterruptedException ex) {
-                JOptionPane.showMessageDialog(null, "Maybe the game crash in loading because: " + ex.getMessage());
-            }
+    /**
+     * Sets the object that each floor is going to have, but have to pass the length of the floor
+     * to know how many object this floor can have.
+     * 
+     * @param index
+     * @param width 
+     */
+    private void SetObjectID(int index, int width) {
+        int blockNumber = (width + 64) / 64;
+        int randomLength = 5;
+        
+        if (blockNumber <= 3) {
+            objectID[index][0] = 1;
+            objectID[index][1] = 1;
+        } else if (blockNumber <= 6) {
+            objectID[index][0] = 2;
+            objectID[index][1] = generator.nextInt(2)+ 1;
+        } else if (blockNumber <= 9) {
+            objectID[index][0] = 3;
+            objectID[index][1] = generator.nextInt(2)+ 1;
+        } else if (blockNumber <= 12) {
+            objectID[index][0] = 4;
+            objectID[index][1] = 3;
+        } else if (blockNumber <= 15) {
+            objectID[index][0] = 5;
+            objectID[index][1] = generator.nextInt(3)+ 1;
+        } else if (blockNumber <= 18) {
+            objectID[index][0] = 6;
+            objectID[index][1] = generator.nextInt(3)+ 1;
+        } else if (blockNumber > 18) {
+            objectID[index][0] = 7;
+            objectID[index][1] = generator.nextInt(3)+ 1;
+        }
+        
+        for (int i = 0; i < objectID[index][0]; i ++) {
+            if (generator.nextInt(10) > 3)
+                objectID[index][i + 2] = generator.nextInt(randomLength) + 1;
+            else
+                objectID[index][i + 2] = 0;
         }
     }
     
+    /**
+     * Initialize all floor position, its random, this methods have to be called before the games
+     * start, after the game start have to call the 'RepositionFloor' method
+     */
     private void InitializeFloors() {
         for (line = 0; line < floorLeft.length; line ++) {
-            floorLeft[line].x = 0;
-            floorLeft[line].width = (generator.nextInt(19) + 1) * floorRight.width;
-            floorLeft[line].y = window.getHeight() - (generator.nextInt(8) + 1) * floorRight.width;
-            if (line != 0)
+            
+            if (line != 0) {
+                floorBockNumber[line] = GenerateFloorBockNumber(line);
                 floorLeft[line].x = floorLeft[line - 1].x + floorLeft[line - 1].width + (floorRight.width * 2);
-            else
-                floorLeft[line].width = (generator.nextInt(14) + 6) * floorRight.width;
-            floorLeft[line].y = floorLeft[line].height - 192;
+                floorLeft[line].x += (generator.nextInt(2) * floorRight.width);
+                floorLeft[line].width = (generator.nextInt(20) + 1) * floorRight.width;
+
+            } else {
+                floorBockNumber[line] = generator.nextInt(2) + 1;
+                floorBockNumber[line] = 0;
+                floorLeft[line].width = (generator.nextInt(15) + 6) * floorRight.width;
+            }
+            
+            SetObjectID(line, floorLeft[line].width);
+            
+            floorLeft[line].y = floorLeft[line].height - 128;
+            floorLeft[line].y -= (floorBockNumber[line] * 64);
         }
     }
-    
+    /**
+     * Generates a new raondom position to the floor that exit the windows
+     * 
+     * @param index 
+     */
     private void RepositionFloor(int index) {
+        floorBockNumber[index] = GenerateFloorBockNumber(index);
+        
         floorLeft[index].x = floorLeft[lastFloor].x + floorLeft[lastFloor].width + (floorRight.width * 2);
+        floorLeft[line].x += (generator.nextInt(2) * floorRight.width);
         floorLeft[index].width = (generator.nextInt(19) + 1) * floorRight.width;
+        
+        floorLeft[index].width = (generator.nextInt(15) + 6) * floorRight.width;
+        floorLeft[index].y = floorLeft[index].height - 128;
+        floorLeft[index].y -= (floorBockNumber[index] * 64);
+        
+        SetObjectID(index, floorLeft[index].width);
+        
         lastFloor = index;
+    }
+    
+    /**
+     * Generates the distance in 'Y' that the ninja is going to have to jump
+     * 
+     * @param index
+     * @return 
+     */
+    private int GenerateFloorBockNumber(int index) {
+        int value;
+        
+        if (index == 0) {
+            value = generator.nextInt(5) - 2 + floorBockNumber[floorLeft.length - 1];
+        } else {
+            value = generator.nextInt(5) - 2 + floorBockNumber[index - 1];
+        }
+        
+        for (int i = 0; i < 2; i ++) {
+            if (value < 1) {
+                value += generator.nextInt(2) + 1;
+            } else if (value > 7) {
+                value -= generator.nextInt(2) + 1;
+            }
+        }
+        
+        return value;
     }
     
     public double GetSpeed() {
@@ -138,6 +224,22 @@ public class Floor extends Thread {
             floorRight.x = index.x + index.width;
             floorRight.y =  index.y;
             floorRight.draw();
+        }
+    }
+    
+    public void DrawObjects() {
+        String objectName;
+        
+        for (int i = 0; i < floorLeft.length; i ++) {
+            for (int column = 0; column < objectID[i][0]; column ++) {
+                if (objectID[i][column + 2] != 0) {
+                    object = new GameImage(FILE_WAY  + "Object/" + String.valueOf(objectID[i][1]) +
+                            "Blocks" + String.valueOf(objectID[i][column + 2]) + ".png");
+                    object.x = someMethods.PutImageOnMiddle(object, floorLeft[i], floorRight.width, objectID[i][0], (column));
+                    object.y = floorLeft[i].y - object.height + 2;
+                    object.draw();
+                }
+            }
         }
     }
     

@@ -9,6 +9,7 @@ import jplay.Animation;
 import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.floor;
 import static Main.Main.playing;
+import static Main.Main.someMethods;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ public class Ninja extends Characters {
     //Java variables
     public boolean ninjaAnimationOk;
     public boolean ninjaKeyboardOk;
+    public double jumpForce;
     private final String FILE_WAY = "Images/Playing/Ninja/";
     public int line;
     
@@ -32,8 +34,13 @@ public class Ninja extends Characters {
     @Override
     public void run() {
         
+        int slideTime = 0;
+        final int SLIDE_TIME = 130;
+        
         ninjaAnimationOk = false;
         ninjaKeyboardOk = false;
+        
+        y = 0;
         
         soul = new Sprite(FILE_WAY + "soul.png");
         spriteSheet = new Animation[3];
@@ -49,6 +56,7 @@ public class Ninja extends Characters {
         ninjaAnimation.start();
         
         InitializeSpriteAdjust();
+        JumpForceReset();
         
         soul.x = 100;
         soul.y = 100;
@@ -58,7 +66,7 @@ public class Ninja extends Characters {
             if (ninjaAnimationOk & ninjaKeyboardOk) {
                 break;
             }
-            
+
             try { //If do not have this 'sleep' the 'while' maybe never will exit
                 sleep(100);
             } catch (InterruptedException ex) {
@@ -68,20 +76,43 @@ public class Ninja extends Characters {
         
         soul.y = (floor.GetFirstFloorY() - soul.height);
         
-        playing.SetNinjaOk(true);
+        playing.ninjaOk = true;
         
-        WaitAllThreadsFinish();
+        someMethods.WaitAllThreadsFinish();
         
         while (playing.GetIsPlaying()) {
             
+            //Makes the ninja fall faster or slower in some cases
+            if (!ninjaKeyboard.keyUpIsDown & ninjaKeyboard.isJumping) { //Falter
+                jumpForce = 4;
+            } else if (ninjaKeyboard.isGliding & ninjaKeyboard.keySpaceIsDown) { //Falter
+                jumpForce = 0.4;
+            } else if (ninjaKeyboard.isGliding & !ninjaKeyboard.keySpaceIsDown) { //Slower
+                jumpForce = 4;
+            }
+            
             //Set the floor to sprite and makes it jump
             soul.setFloor((int) (floor.GetFirstFloorY()));
-            soul.jumpApplyForce();
+            soul.jumpApplyForce(jumpForce);
             soul.fall();
             
+            //Put the sprite sheet over the soul
             if (!ninjaKeyboard.changeAnimation) {
                 spriteSheet[spriteSheetEnable].x = soul.x + spriteAdjustX[spriteSheetEnable][spriteSheet[spriteSheetEnable].getInitialFrame() / 10];
                 spriteSheet[spriteSheetEnable].y = soul.y + spriteAdjustY[spriteSheetEnable][spriteSheet[spriteSheetEnable].getInitialFrame() / 10];
+            }
+            
+            //This is how long the ninja can slide
+            if (ninjaKeyboard.isSliding) {
+                if (slideTime > SLIDE_TIME){
+                    ninjaKeyboard.isSliding = false;
+                    ninjaKeyboard.isRunning = true;
+                    slideTime = 0;
+                    ninjaKeyboard.changeAnimation = true;
+                } else {
+                    slideTime ++;
+                }
+   
             }
             
             //This sleep is equals for all threads
@@ -96,21 +127,6 @@ public class Ninja extends Characters {
     }
     
     /*----  Classe methods  ----*/
-    private void WaitAllThreadsFinish() {
-        //Wait some threads be created for do not have 'NullPointerExeption'
-        while (true) {
-            if (playing.allThreadsOk) {
-                break;
-            }
-            
-            try { //If do not have this 'sleep' the 'while' maybe never will exit
-                sleep(100);
-            } catch (InterruptedException ex) {
-                JOptionPane.showMessageDialog(null, "Maybe the game crash in loading because: " + ex.getMessage());
-            }
-        }
-    }
-    
     private void InitializeSpriteAdjust() {
         //Running
         spriteAdjustX[0][0] = -45; //x
@@ -136,6 +152,10 @@ public class Ninja extends Characters {
         //Glide
         spriteAdjustX[2][1] = -40;
         spriteAdjustY[2][1] = -30;
+    }
+    
+    public void JumpForceReset() {
+        jumpForce = 1;
     }
     
     public void SetNinjaAnimationOk(boolean value) {

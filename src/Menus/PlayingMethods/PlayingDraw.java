@@ -3,11 +3,12 @@ package Menus.PlayingMethods;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
-import static Main.Main.window;
+import static Main.Main.enemy;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.floor;
 import static Main.Main.water;
+import static Main.Main.window;
 
 //Others imports
 import static java.lang.Thread.sleep;
@@ -29,6 +30,8 @@ public class PlayingDraw extends Thread {
             
             water.DrawWater();
             
+            floor.DrawObjects();
+            
             floor.DrawLeftFloor();
             floor.DrawRightFloor();
             
@@ -37,6 +40,9 @@ public class PlayingDraw extends Thread {
             //sprite animation is changed and its position is reseted
             if (!ninja.GetNinjaKeyboard().changeAnimation)
                 ninja.DrawSpriteSheet();
+            
+            playing.DrawPlayingWindow();
+            enemy.DrawSpriteSheet();
             
             window.update();
             

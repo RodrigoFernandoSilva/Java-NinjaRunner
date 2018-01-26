@@ -63,25 +63,35 @@ public class NinjaAnimation extends Thread {
                     ninja.GetNinjaKeyboard().isRunning = true;
                     isFalling = false;
                     SetCorrectAnimation();
+                } else if (ninja.GetNinjaKeyboard().isGliding) {
+                    ninja.GetNinjaKeyboard().isGliding = false;
+                    ninja.GetNinjaKeyboard().isRunning = true;
+                    isFalling = false;
+                    SetCorrectAnimation();
                 }
             } else if (isFalling & ninja.soul.getVelocityY() == 0) {
                 isFalling = false;
             }
             
+            //Sets animation to running if the ninja collided with the floor and to do not stops gliding
+            if (ninja.GetNinjaKeyboard().isGliding & ninja.soul.getOnFloor()) {
+                ninja.GetNinjaKeyboard().isGliding = false;
+                ninja.GetNinjaKeyboard().isRunning = true;
+            }
+            
             //Set the animation to 'running' after the finish the 'attack' or 'throw' animation
-            if ((ninja.GetNinjaKeyboard().isJumpAttack | ninja.GetNinjaKeyboard().isJumpThrow |
+            if ((ninja.GetNinjaKeyboard().isJumpAttack  | ninja.GetNinjaKeyboard().isJumpThrow |
                  ninja.GetNinjaKeyboard().isRunAttack   | ninja.GetNinjaKeyboard().isRunThrow)) {
                 if (!ninja.GetNinjaAnimation().CanUpdateSprite()) {
+                    ninja.GetNinjaKeyboard().isAnyAttack = false;
+                    ninja.GetNinjaKeyboard().SetFalseBoolean();
                     if (ninja.soul.isJumping) {
-                        ninja.GetNinjaKeyboard().SetFalseBoolean();
                         ninja.GetNinjaKeyboard().isJumping = true;
-                        SetCorrectAnimation();
                         wasJumping = true;
                     } else if (!ninja.soul.isJumping) {
-                        ninja.GetNinjaKeyboard().SetFalseBoolean();
                         ninja.GetNinjaKeyboard().isRunning = true;
-                        SetCorrectAnimation();
                     }
+                    SetCorrectAnimation();
                 }
             }
             
@@ -142,12 +152,17 @@ public class NinjaAnimation extends Thread {
         
     }
     
+    /**
+     * Changes the animation that the ninja is playing using how reference
+     * the 'NinjaKeyboard' variables.
+     */
     private void SetCorrectAnimation() {
         int initialFrame = 0;
         int finalFrame = 10;
         
         if (ninja.GetNinjaKeyboard().isRunning) {
             ninja.spriteSheetEnable = 0;
+            ninja.JumpForceReset();
         } else if (ninja.GetNinjaKeyboard().isRunThrow) {
             ninja.spriteSheetEnable = 0;
             initialFrame = 10;

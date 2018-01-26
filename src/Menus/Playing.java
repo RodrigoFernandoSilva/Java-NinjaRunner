@@ -5,15 +5,18 @@ package Menus;
 import jplay.GameImage;
 
 //Classe imports
+import Characters.Enemy;
 import Characters.Ninja;
 import Menus.PlayingMethods.PlayingDraw;
 import Menus.PlayingMethods.PlayingUpdate;
+import Menus.PlayingMethods.PlayingWindow;
 import Plataform.Floor;
 import Plataform.Water;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.enemy;
 import static Main.Main.floor;
 import static Main.Main.keyboard;
 import static Main.Main.ninja;
@@ -35,10 +38,12 @@ public class Playing {
     
     //Java variables
     public boolean allThreadsOk; //Some threads need wait all threads be create to do not have 'NullPointerException'
-    private boolean isPlaying;
-    private boolean floorOk;
-    private boolean ninjaOk;
-    private boolean waterOk;
+    public boolean isPlaying;
+    public boolean enemyOk;
+    public boolean floorOk;
+    public boolean ninjaOk;
+    public boolean playingWindowOk;
+    public boolean waterOk;
     private double speed = 50; //50
     private double subSpeedMax;
     private final String FILE_WAY = "Images/Playing/"; //These variables is going to be used to initialize others variables
@@ -47,8 +52,9 @@ public class Playing {
     public GameImage[] background;
     
     //Classe variables
-    public PlayingDraw playingDraw;
-    public PlayingUpdate playingUpdate;
+    private PlayingDraw playingDraw;
+    private PlayingUpdate playingUpdate;
+    private PlayingWindow playingWindow;
     
     @SuppressWarnings("SleepWhileInLoop")
     public void Playing() {
@@ -99,9 +105,17 @@ public class Playing {
     @SuppressWarnings("SleepWhileInLoop")
     public void InitializeThreads() {
         allThreadsOk = false;
+        enemyOk = false;
         floorOk = false;
         ninjaOk = false;
+        playingWindowOk = false;
         waterOk = false;
+        
+        enemy = new Enemy();
+        enemy.start();
+        
+        floor = new Floor();
+        floor.start();
         
         ninja = new Ninja();
         ninja.start();
@@ -109,12 +123,12 @@ public class Playing {
         water = new Water();
         water.start();
         
-        floor = new Floor();
-        floor.start();
+        playingWindow = new PlayingWindow();
+        playingWindow.start();
         
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
-            if (ninjaOk & floorOk & waterOk) {
+            if (ninjaOk & floorOk & waterOk & playingWindowOk & enemyOk) {
                 break;
             }
             
@@ -150,8 +164,8 @@ public class Playing {
         }
     }
     
-    public boolean GetIsPlaying() {
-        return isPlaying;
+    public void DrawPlayingWindow() {
+        playingWindow.DrawCamera();
     }
     
     public double GetSpeed() {
@@ -162,15 +176,11 @@ public class Playing {
         return subSpeedMax;
     }
     
-    public void SetFloorOk(boolean value) {
-        floorOk = value;
+    public boolean GetIsPlaying() {
+        return isPlaying;
     }
-    
-    public void SetNinjaOk(boolean value) {
-        ninjaOk = value;
-    }
-    
-    public void SetWaterOk(boolean value) {
-        waterOk = value;
+
+    public PlayingWindow GetPlayingWindow() {
+        return playingWindow;
     }
 }

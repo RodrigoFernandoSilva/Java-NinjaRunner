@@ -333,17 +333,18 @@ public class Sprite extends Animation
     /**
      * This method have to be call all time, because it make the sprite jump if the keyboard was
      * press, the Jplay  original method need pass the key but this one do not need makes it
+     * @param force
      */
-    public void jumpApplyForce() {
+    public void jumpApplyForce(double force) {
         if (isJumping) {
             if (onFloor == true) {
                 onFloor = false;
                 velocityY = -jumpVelocity;
             }
-
-            velocityY += gravity;
+            
+            velocityY += (gravity * force);
             this.y += velocityY;
-
+            
             if ( this.y + this.height - floor > 0.0001 ) {
                 velocityY = 0;
                 this.y = floor - this.height;
@@ -364,6 +365,14 @@ public class Sprite extends Animation
     public void jumpWithoutPress () {
         if (!isJumping)
             isJumping = true;            
+    }
+    
+    /**
+     * Returns whether the sprite is on the floor or not
+     * @return boolean
+     */
+    public boolean getOnFloor(){
+        return this.onFloor;
     }
     
     /**
@@ -407,7 +416,7 @@ public class Sprite extends Animation
     {
             return !onFloor;
     }
-
+    
     /**
      * This method simulates the gravity.
      * It's necessary sets the floor before call this method.
@@ -758,5 +767,5 @@ public class Sprite extends Animation
      public boolean isBullet(){
          return body.isBullet();
      }
-
+     
 }

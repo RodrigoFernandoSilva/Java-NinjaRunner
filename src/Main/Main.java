@@ -12,6 +12,7 @@ import jplay.Mouse;
 import jplay.Window;
 
 //Classe imports
+import Characters.Enemy;
 import Characters.Ninja;
 import Menus.Playing;
 import Plataform.Floor;
@@ -36,6 +37,7 @@ public class Main {
     public static Window window;
     
     //Classe variables
+    public static Enemy enemy;
     public static Ninja ninja;
     public static Floor floor;
     public static Playing playing;
@@ -55,8 +57,8 @@ public class Main {
         
         //Add the keys that is going to be used on game
         keyboard.addKey(KeyEvent.VK_ESCAPE, InputBase.DETECT_INITIAL_PRESS_ONLY);
-        keyboard.addKey(KeyEvent.VK_SPACE, InputBase.DETECT_INITIAL_PRESS_ONLY);
-        keyboard.addKey(KeyEvent.VK_UP, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_SPACE, InputBase.DETECT_EVERY_PRESS);
+        keyboard.addKey(KeyEvent.VK_UP, InputBase.DETECT_EVERY_PRESS);
         keyboard.addKey(KeyEvent.VK_DOWN, InputBase.DETECT_INITIAL_PRESS_ONLY);
         keyboard.addKey(KeyEvent.VK_LEFT, InputBase.DETECT_INITIAL_PRESS_ONLY);
         keyboard.addKey(KeyEvent.VK_RIGHT, InputBase.DETECT_INITIAL_PRESS_ONLY);
