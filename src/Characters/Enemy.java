@@ -35,7 +35,7 @@ public class Enemy extends Characters {
         
         while (playing.GetIsPlaying()) {
             
-            spriteSheet[0].y = y - spriteSheet[0].height - playing.GetPlayingWindow().positionY;
+            
             
             //This sleep is equals for all threads
             try {

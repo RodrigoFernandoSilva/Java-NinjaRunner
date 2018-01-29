@@ -31,9 +31,9 @@ public class Sprite extends Animation
     private double velocityY = 0;
     private double gravity = 0.098;
     private boolean onFloor = false;
-    public boolean isJumping = false;
+    private boolean isJumping = false;
     private int floor;
-
+    
     /**
      * Constructor of the class. Creates a class with one frame.
      * @param fileName Path of the file.
@@ -331,43 +331,6 @@ public class Sprite extends Animation
     }
     
     /**
-     * This method have to be call all time, because it make the sprite jump if the keyboard was
-     * press, the Jplay  original method need pass the key but this one do not need makes it
-     * @param force
-     */
-    public void jumpApplyForce(double force) {
-        if (isJumping) {
-            if (onFloor == true) {
-                onFloor = false;
-                velocityY = -jumpVelocity;
-            }
-            
-            velocityY += (gravity * force);
-            this.y += velocityY;
-            
-            if ( this.y + this.height - floor > 0.0001 ) {
-                velocityY = 0;
-                this.y = floor - this.height;
-                onFloor = true;
-            }
-        }
-        
-        if (isJumping & velocityY > 0 & (this.y + this.height) > (floor - 10)) {
-            isJumping = false;
-        }
-        
-    }
-    
-    /**
-     * Makes the sprite jump without pressing any key, just need call this method. the sprite
-     * just junp one time, do not have double jump
-     */
-    public void jumpWithoutPress () {
-        if (!isJumping)
-            isJumping = true;            
-    }
-    
-    /**
      * Returns whether the sprite is on the floor or not
      * @return boolean
      */
@@ -423,8 +386,6 @@ public class Sprite extends Animation
      */
     public void fall()
     {
-        if(!isJumping) //Just fall if the sprite is not jumping
-        {
             if ( floor - this.y - this.height < 1 )
             {
                 velocityY = 0;
@@ -434,7 +395,6 @@ public class Sprite extends Animation
                 velocityY += gravity;
 
             this.y += velocityY;
-        }
     }
 
     /**

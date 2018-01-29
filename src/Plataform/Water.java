@@ -27,18 +27,19 @@ public class Water extends Thread {
     public double limitWaterMove = 10;
     public double waterInitialPosition;
     public double speedUpDown; //Speed that the water move up or down
+    public double y;
     private final String FILE_WAY = "Images/Plataform/";
     
     //Jplay variables
-    private Animation water;
+    public Animation water;
     
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
         
         water = new Animation(FILE_WAY + "Water.png");
-        water.y = someMethods.SetPositionBelowWindow(water, window) + 80;
-        waterInitialPosition = water.y;
+        y = someMethods.SetPositionBelowWindow(water, window) + 80;
+        waterInitialPosition = y;
         
         playing.waterOk = true;
         
@@ -57,13 +58,13 @@ public class Water extends Thread {
             //Move the water up and down
             if (moveWaterUp) {
                 water.x -= (speedUpDown / 2) * deltaTime;
-                water.y -= speedUpDown * deltaTime;
-                if (waterInitialPosition - limitWaterMove > water.y)
+                y -= speedUpDown * deltaTime;
+                if (waterInitialPosition - limitWaterMove > y)
                     moveWaterUp = false;
             } else if (!moveWaterUp) {
                 water.x += (speedUpDown / 2) * deltaTime;
-                water.y += speedUpDown * deltaTime;
-                if (waterInitialPosition + limitWaterMove < water.y)
+                y += speedUpDown * deltaTime;
+                if (waterInitialPosition + limitWaterMove < y)
                     moveWaterUp = true;
             }
             

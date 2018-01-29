@@ -24,6 +24,7 @@ public class Floor extends Thread {
     
     //Java variables
     private double speed;
+    public double[] y;
     private int firstFloor;
     private int lastFloor;
     private int line;
@@ -37,7 +38,7 @@ public class Floor extends Thread {
     private Random generator;
     
     //Jplay variables
-    private Animation[] floorLeft;
+    public Animation[] floorLeft;
     private GameImage floorRight;
     private GameImage object;
     
@@ -50,9 +51,11 @@ public class Floor extends Thread {
         floorLeft = new Animation[7];
         floorBockNumber = new int[floorLeft.length];
         objectID = new int[floorLeft.length][9];
+        y = new double[floorLeft.length];
         
-        for (line = 0; line < floorLeft.length; line ++)
+        for (line = 0; line < floorLeft.length; line ++) {
             floorLeft[line] = new Animation(FILE_WAY + "TiledMapLeft.png");
+        }
         
         floorRight = new Animation(FILE_WAY + "TiledMapRight.png");
         
@@ -153,14 +156,13 @@ public class Floor extends Thread {
 
             } else {
                 floorBockNumber[line] = generator.nextInt(2) + 1;
-                floorBockNumber[line] = 0;
-                floorLeft[line].width = (generator.nextInt(15) + 6) * floorRight.width;
+                floorLeft[line].width = (generator.nextInt(6) + 6) * floorRight.width;
             }
             
             SetObjectID(line, floorLeft[line].width);
             
-            floorLeft[line].y = floorLeft[line].height - 128;
-            floorLeft[line].y -= (floorBockNumber[line] * 64);
+            y[line] = floorLeft[line].height - 128;
+            y[line] -= (floorBockNumber[line] * 64);
         }
     }
     /**
@@ -169,6 +171,7 @@ public class Floor extends Thread {
      * @param index 
      */
     private void RepositionFloor(int index) {
+        
         floorBockNumber[index] = GenerateFloorBockNumber(index);
         
         floorLeft[index].x = floorLeft[lastFloor].x + floorLeft[lastFloor].width + (floorRight.width * 2);
@@ -176,8 +179,8 @@ public class Floor extends Thread {
         floorLeft[index].width = (generator.nextInt(19) + 1) * floorRight.width;
         
         floorLeft[index].width = (generator.nextInt(15) + 6) * floorRight.width;
-        floorLeft[index].y = floorLeft[index].height - 128;
-        floorLeft[index].y -= (floorBockNumber[index] * 64);
+        y[index] = floorLeft[index].height - 128;
+        y[index] -= (floorBockNumber[index] * 64);
         
         SetObjectID(index, floorLeft[index].width);
         
@@ -244,7 +247,7 @@ public class Floor extends Thread {
     }
     
     public double GetFirstFloorY() {
-        return floorLeft[firstFloor].y;
+        return y[firstFloor];
     }
     
 }

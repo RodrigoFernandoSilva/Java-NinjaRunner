@@ -54,7 +54,7 @@ public class Playing {
     //Classe variables
     private PlayingDraw playingDraw;
     private PlayingUpdate playingUpdate;
-    private PlayingWindow playingWindow;
+    public PlayingWindow playingWindow;
     
     @SuppressWarnings("SleepWhileInLoop")
     public void Playing() {
@@ -179,7 +179,7 @@ public class Playing {
     public boolean GetIsPlaying() {
         return isPlaying;
     }
-
+    
     public PlayingWindow GetPlayingWindow() {
         return playingWindow;
     }

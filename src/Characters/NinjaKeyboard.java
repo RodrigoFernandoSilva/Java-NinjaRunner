@@ -49,23 +49,23 @@ public class NinjaKeyboard extends Thread{
             keySpaceIsDown = keyboard.keyDown(KeyEvent.VK_SPACE);
             
             if (keySpaceIsDown) {
-                if (!isAnyAttack & !isGliding & !ninja.soul.getOnFloor() & !changeAnimation & ninja.soul.getVelocityY() != 0) {
+                if (!isAnyAttack & !isGliding & ninja.GetIsJumping() & !changeAnimation & ninja.velocityY != 0) {
                     SetFalseBoolean();
                     isGliding = true;
                     changeAnimation = true;
                 }
             }
-            if (keyUpIsDown) {
+            if (keyUpIsDown & ninja.GetOnFloor()) {
                 //If the ninja jump during floor attack, the animation need be change to jump attack,
                 //but in the same frame
                 if (!isJumping & !changeAnimation & !animationTransition & (isRunAttack | isRunThrow)) {
                     animationTransition = true;
-                    ninja.soul.jumpWithoutPress();
+                    ninja.SetIsJumping(true);
                 } else if (!isJumping & (isRunning | isRunAttack | isRunThrow | isSliding)) { //The ninja jumped but was not attacking
                     SetFalseBoolean();
                     isJumping = true;
                     changeAnimation = true;
-                    ninja.soul.jumpWithoutPress();
+                    ninja.SetIsJumping(true);
                 }
             }
             if (keyboard.keyDown(KeyEvent.VK_DOWN)) {

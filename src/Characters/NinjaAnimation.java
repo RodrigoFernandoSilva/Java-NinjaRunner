@@ -3,8 +3,6 @@ package Characters;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
-import static Main.Main.floor;
-import static Main.Main.keyboard;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 
@@ -17,6 +15,8 @@ import javax.swing.JOptionPane;
  * @author Rodrigo Fernando da Silva
  */
 public class NinjaAnimation extends Thread {
+    
+    public boolean isFalling;
     /**
      *This variable is used to know if the ninja was jumping, because after finish the animation
      *'jumpAttack' or 'jumpThrow' need set the sprite frame to last frame.
@@ -26,8 +26,6 @@ public class NinjaAnimation extends Thread {
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
-        
-        boolean isFalling;
         
         isFalling = false;
         wasJumping = false;
@@ -41,19 +39,19 @@ public class NinjaAnimation extends Thread {
         
         while (playing.GetIsPlaying()) {
             
-            if (ninja.GetNinjaKeyboard().changeAnimation) {;
+            if (ninja.GetNinjaKeyboard().changeAnimation) {
                 SetCorrectAnimation();
             }
             
             //Set the animation speed to sprite sheet that is enable
-            ninja.animationSpeed = (int) (playing.GetSpeed() * 40);
+            ninja.animationSpeed = (int) (4000 - ((playing.GetSpeed() * 40) * 0.55));
+            
             ninja.spriteSheet[ninja.spriteSheetEnable].setTotalDuration(ninja.animationSpeed);
             
-            
             //This 'ifs' is used to set the animation to 'running' after the sprite collision with the floor
-            if (!isFalling & ninja.soul.getVelocityY() > 0) {
+            if (!isFalling & ninja.velocityY > 0) {
                 isFalling = true;
-            } else if(isFalling & ninja.soul.y + ninja.soul.height > floor.GetFirstFloorY() - 10) {
+            } else if(isFalling & !ninja.GetIsJumping()) {
                 //Set the animation to attack if the ninja collision with the floor during your attack animation
                 if (ninja.GetNinjaKeyboard().isJumpAttack | ninja.GetNinjaKeyboard().isJumpThrow) {
                     SetCorrectAnimationTransition();
@@ -74,9 +72,10 @@ public class NinjaAnimation extends Thread {
             }
             
             //Sets animation to running if the ninja collided with the floor and to do not stops gliding
-            if (ninja.GetNinjaKeyboard().isGliding & ninja.soul.getOnFloor()) {
+            if (ninja.GetNinjaKeyboard().isGliding & !ninja.GetIsJumping()) {
                 ninja.GetNinjaKeyboard().isGliding = false;
                 ninja.GetNinjaKeyboard().isRunning = true;
+                SetCorrectAnimation();
             }
             
             //Set the animation to 'running' after the finish the 'attack' or 'throw' animation
@@ -85,10 +84,10 @@ public class NinjaAnimation extends Thread {
                 if (!ninja.GetNinjaAnimation().CanUpdateSprite()) {
                     ninja.GetNinjaKeyboard().isAnyAttack = false;
                     ninja.GetNinjaKeyboard().SetFalseBoolean();
-                    if (ninja.soul.isJumping) {
+                    if (ninja.GetIsJumping()) {
                         ninja.GetNinjaKeyboard().isJumping = true;
                         wasJumping = true;
-                    } else if (!ninja.soul.isJumping) {
+                    } else if (!ninja.GetIsJumping()) {
                         ninja.GetNinjaKeyboard().isRunning = true;
                     }
                     SetCorrectAnimation();

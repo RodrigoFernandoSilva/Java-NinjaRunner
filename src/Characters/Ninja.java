@@ -21,9 +21,18 @@ import javax.swing.JOptionPane;
 public class Ninja extends Characters {
     
     //Java variables
+    private boolean isJumping = false;
     public boolean ninjaAnimationOk;
     public boolean ninjaKeyboardOk;
+    private boolean onFloor = true;
+    private double ninjaFloor;
+    /**
+     * It is the additional jump force.
+     */
     public double jumpForce;
+    public double velocityY = 0;
+    private final double GRAVITY = 0.098;
+    private final double JUMP_FORCE = 5.3;
     private final String FILE_WAY = "Images/Playing/Ninja/";
     public int line;
     
@@ -59,7 +68,6 @@ public class Ninja extends Characters {
         JumpForceReset();
         
         soul.x = 100;
-        soul.y = 100;
         
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
@@ -74,11 +82,25 @@ public class Ninja extends Characters {
             }
         }
         
-        soul.y = (floor.GetFirstFloorY() - soul.height);
-        
         playing.ninjaOk = true;
         
         someMethods.WaitAllThreadsFinish();
+        
+        //Wait the 'PlayingWindow' thread has run one time for the ninja initial position do not
+        //bug, because initial position of the ninja is set using how reference the first floor
+        while (true) {
+            if (playing.GetPlayingWindow().positionY < 0) {
+                break;
+            }
+            
+            try { //If do not have this 'sleep' the 'while' maybe never will exit
+                sleep(100);
+            } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(null, "Maybe the game crash in loading because: " + ex.getMessage());
+            }
+        }
+        
+        y = (floor.GetFirstFloorY());
         
         while (playing.GetIsPlaying()) {
             
@@ -92,9 +114,13 @@ public class Ninja extends Characters {
             }
             
             //Set the floor to sprite and makes it jump
-            soul.setFloor((int) (floor.GetFirstFloorY()));
-            soul.jumpApplyForce(jumpForce);
-            soul.fall();
+            ninjaFloor = floor.GetFirstFloorY();
+            jumpApplyForce(jumpForce);
+            soul.y = y - soul.height;
+            
+            if (onFloor & y < ninjaFloor) {
+                onFloor = false;
+            }
             
             //Put the sprite sheet over the soul
             if (!ninjaKeyboard.changeAnimation) {
@@ -127,6 +153,34 @@ public class Ninja extends Characters {
     }
     
     /*----  Classe methods  ----*/
+    private void jumpApplyForce(double force) {
+        if (isJumping | (!isJumping & !onFloor)) {
+            velocityY += (GRAVITY * force);
+            
+            if (y + (soul.height / 4) - playing.GetPlayingWindow().camera.y > playing.GetPlayingWindow().camera.height / 2) {
+                playing.GetPlayingWindow().camera.y = 0;
+                y += velocityY;
+            } else {
+                y = (playing.GetPlayingWindow().camera.height / 2) - (soul.height / 4);
+                playing.GetPlayingWindow().ApplyForceOnCamera(velocityY);
+            }
+            
+            if (velocityY > 0 & y > ninjaFloor + playing.GetPlayingWindow().camera.y) {
+                onFloor = true;
+                isJumping = false;
+                y = ninjaFloor + playing.GetPlayingWindow().camera.y;
+            }
+        }
+    }
+    
+    public void SetIsJumping(boolean value) {
+        if (isJumping != value) {
+            isJumping = value;
+            onFloor = false;
+            velocityY = -JUMP_FORCE;
+        }
+    }
+    
     private void InitializeSpriteAdjust() {
         //Running
         spriteAdjustX[0][0] = -45; //x
@@ -177,6 +231,14 @@ public class Ninja extends Characters {
     public void StartNinjaKeyboard() {
         ninjaKeyboard = new NinjaKeyboard();
         ninjaKeyboard.start();
+    }
+    
+    public boolean GetIsJumping() {
+        return isJumping;
+    }
+    
+    public boolean GetOnFloor() {
+        return onFloor;
     }
     
 }
