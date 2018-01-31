@@ -49,11 +49,11 @@ public class NinjaAnimation extends Thread {
             ninja.spriteSheet[ninja.spriteSheetEnable].setTotalDuration(ninja.animationSpeed);
             
             //This 'ifs' is used to set the animation to 'running' after the sprite collision with the floor
-            if (!isFalling & ninja.velocityY > 0) {
+            if (!isFalling && ninja.velocityY > 0) {
                 isFalling = true;
-            } else if(isFalling & !ninja.GetIsJumping()) {
+            } else if(isFalling && !ninja.GetIsJumping()) {
                 //Set the animation to attack if the ninja collision with the floor during your attack animation
-                if (ninja.GetNinjaKeyboard().isJumpAttack | ninja.GetNinjaKeyboard().isJumpThrow) {
+                if (ninja.GetNinjaKeyboard().isJumpAttack || ninja.GetNinjaKeyboard().isJumpThrow) {
                     SetCorrectAnimationTransition();
                     isFalling = false;
                 } else if (ninja.GetNinjaKeyboard().isJumping) {
@@ -67,20 +67,20 @@ public class NinjaAnimation extends Thread {
                     isFalling = false;
                     SetCorrectAnimation();
                 }
-            } else if (isFalling & ninja.soul.getVelocityY() == 0) {
+            } else if (isFalling && ninja.soul.getVelocityY() == 0) {
                 isFalling = false;
             }
             
             //Sets animation to running if the ninja collided with the floor and to do not stops gliding
-            if (ninja.GetNinjaKeyboard().isGliding & !ninja.GetIsJumping()) {
+            if (ninja.GetNinjaKeyboard().isGliding && !ninja.GetIsJumping()) {
                 ninja.GetNinjaKeyboard().isGliding = false;
                 ninja.GetNinjaKeyboard().isRunning = true;
                 SetCorrectAnimation();
             }
             
             //Set the animation to 'running' after the finish the 'attack' or 'throw' animation
-            if ((ninja.GetNinjaKeyboard().isJumpAttack  | ninja.GetNinjaKeyboard().isJumpThrow |
-                 ninja.GetNinjaKeyboard().isRunAttack   | ninja.GetNinjaKeyboard().isRunThrow)) {
+            if ((ninja.GetNinjaKeyboard().isJumpAttack  || ninja.GetNinjaKeyboard().isJumpThrow ||
+                 ninja.GetNinjaKeyboard().isRunAttack   || ninja.GetNinjaKeyboard().isRunThrow)) {
                 if (!ninja.GetNinjaAnimation().CanUpdateSprite()) {
                     ninja.GetNinjaKeyboard().isAnyAttack = false;
                     ninja.GetNinjaKeyboard().SetFalseBoolean();
@@ -208,7 +208,7 @@ public class NinjaAnimation extends Thread {
             ninja.spriteSheet[ninja.spriteSheetEnable].setCurrFrame(ninja.spriteSheet[ninja.spriteSheetEnable].getFinalFrame() - 1);
             wasJumping = false;
             return false;
-        } else if (!ninja.GetNinjaKeyboard().isRunning & !ninja.GetNinjaKeyboard().isGliding & !ninja.GetNinjaKeyboard().isSliding) {
+        } else if (!ninja.GetNinjaKeyboard().isRunning && !ninja.GetNinjaKeyboard().isGliding && !ninja.GetNinjaKeyboard().isSliding) {
             if (ninja.spriteSheet[ninja.spriteSheetEnable].getCurrFrame() >= ninja.spriteSheet[ninja.spriteSheetEnable].getFinalFrame() - 1) {
                 return false;
             }

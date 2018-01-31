@@ -2,15 +2,18 @@
 package Plataform;
 
 //Jplay imports
+import Characters.Enemy;
 import jplay.Animation;
 import jplay.GameImage;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.enemy;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import static Main.Main.window;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -23,6 +26,7 @@ import java.util.Random;
 public class Floor extends Thread {
     
     //Java variables
+    private boolean[] enemyGenerated;
     private double speed;
     public double[] y;
     private int firstFloor;
@@ -34,11 +38,11 @@ public class Floor extends Thread {
      * line show which block type
      */
     private int[][] objectID;
-    private final String FILE_WAY = "Images/Plataform/";
+    private final String FILE_WAY = "Images/Playing/Plataform/";
     private Random generator;
     
     //Jplay variables
-    public Animation[] floorLeft;
+    public GameImage[] floorLeft;
     private GameImage floorRight;
     private GameImage object;
     
@@ -52,9 +56,11 @@ public class Floor extends Thread {
         floorBockNumber = new int[floorLeft.length];
         objectID = new int[floorLeft.length][9];
         y = new double[floorLeft.length];
+        enemyGenerated = new boolean[floorLeft.length];
         
         for (line = 0; line < floorLeft.length; line ++) {
             floorLeft[line] = new Animation(FILE_WAY + "TiledMapLeft.png");
+            enemyGenerated[line] = false;
         }
         
         floorRight = new Animation(FILE_WAY + "TiledMapRight.png");
@@ -76,10 +82,17 @@ public class Floor extends Thread {
             for (line = 0; line < floorLeft.length; line ++) {
                 floorLeft[line].x -= (speed) * deltaTime;
                 //Reposition the floor after it exit the window
-                if (someMethods.ExitWindow(floorLeft[line], floorRight.width * 3))
+                if (someMethods.ExitWindow(floorLeft[line], floorRight.width * 3)) {
                     RepositionFloor(line);
+                }
+                
+                if (!enemyGenerated[line] && floorLeft[line].x < window.getWidth()) {
+                    enemyGenerated[line] = true;
+                    GenerateEnemy(line);
+                }
             }
             
+            //Sets who is the first floor
             if ((floorLeft[firstFloor].x + floorLeft[firstFloor].width + (floorRight.width * 2)) <
                  ninja.GetSoul().x + ninja.GetSoul().width) {
                 firstFloor ++;
@@ -150,19 +163,24 @@ public class Floor extends Thread {
             
             if (line != 0) {
                 floorBockNumber[line] = GenerateFloorBockNumber(line);
+                //floorBockNumber[line] = 5;
                 floorLeft[line].x = floorLeft[line - 1].x + floorLeft[line - 1].width + (floorRight.width * 2);
-                floorLeft[line].x += (generator.nextInt(2) * floorRight.width);
+                floorLeft[line].x += (generator.nextInt(5) * floorRight.width); //Distance between the floors
                 floorLeft[line].width = (generator.nextInt(20) + 1) * floorRight.width;
 
             } else {
                 floorBockNumber[line] = generator.nextInt(2) + 1;
+                //floorBockNumber[line] = 7;
                 floorLeft[line].width = (generator.nextInt(6) + 6) * floorRight.width;
+                //floorLeft[line].width = 400;
+                enemyGenerated[line] = true;
             }
             
             SetObjectID(line, floorLeft[line].width);
             
             y[line] = floorLeft[line].height - 128;
             y[line] -= (floorBockNumber[line] * 64);
+            
         }
     }
     /**
@@ -185,6 +203,7 @@ public class Floor extends Thread {
         SetObjectID(index, floorLeft[index].width);
         
         lastFloor = index;
+        enemyGenerated[index] = false;
     }
     
     /**
@@ -213,34 +232,61 @@ public class Floor extends Thread {
         return value;
     }
     
+    /**
+     * Generates the enemy that is going to be over the floor.
+     * 
+     * @param index 
+     */
+    private void GenerateEnemy(int index) {
+        for (int i = 0; i < enemy.length; i ++) {
+            if (enemy[i].GetFather() < 0) {
+                GenerateEnemyPositionX(i, index);
+                enemy[i].SetY(y[index]);
+                enemy[i].SetFather(index);
+                break;
+            }
+        }
+    }
+    
+    private void GenerateEnemyPositionX(int enemyIndex, int floorIndex) {
+        if (floorBockNumber[floorIndex] != 1) {
+            enemy[enemyIndex].SetX(128);
+        }
+    }
+    
     public double GetSpeed() {
         return speed;
     }
     
     public void DrawLeftFloor() {
-        for (Animation index : floorLeft)
-            index.draw();
+        for (GameImage index : floorLeft) {
+            if (someMethods.IsOnScene(index, window)) {
+                index.draw();
+            }
+        }
     }
     
     public void DrawRightFloor() {
-        for (Animation index : floorLeft) {
+        for (GameImage index : floorLeft) {
             floorRight.x = index.x + index.width;
             floorRight.y =  index.y;
-            floorRight.draw();
+            if (someMethods.IsOnScene(floorRight, window)) {
+                floorRight.draw();
+            }
         }
     }
     
     public void DrawObjects() {
-        String objectName;
-        
         for (int i = 0; i < floorLeft.length; i ++) {
             for (int column = 0; column < objectID[i][0]; column ++) {
                 if (objectID[i][column + 2] != 0) {
                     object = new GameImage(FILE_WAY  + "Object/" + String.valueOf(objectID[i][1]) +
                             "Blocks" + String.valueOf(objectID[i][column + 2]) + ".png");
-                    object.x = someMethods.PutImageOnMiddle(object, floorLeft[i], floorRight.width, objectID[i][0], (column));
-                    object.y = floorLeft[i].y - object.height + 2;
-                    object.draw();
+                    if (someMethods.IsOnScene(object, window)) {
+                        object.x = someMethods.PutImageOnMiddle(object, floorLeft[i], floorRight.width, objectID[i][0], (column));
+                        object.y = floorLeft[i].y - object.height + 2;
+                        object.draw();
+                    }
                 }
             }
         }
@@ -248,6 +294,22 @@ public class Floor extends Thread {
     
     public double GetFirstFloorY() {
         return y[firstFloor];
+    }
+    
+    /**
+     * Returns if the image collided with one floor, but sees if the image is inside the floor.
+     * 
+     * @param image
+     * @return 
+     */
+    public boolean Hit(GameImage image) {
+        for (GameImage index : floorLeft) {
+            if (index.collided(image) && image.x > index.x) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
 }

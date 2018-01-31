@@ -21,12 +21,15 @@ public class PlayingUpdate extends Thread {
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
         
+        int line; //It is used in 'for'.
         while (playing.GetIsPlaying()) {
             
             if (ninja.GetNinjaAnimation().CanUpdateSprite())
                 ninja.UpdateSpriteSheet();
             
-            enemy.UpdateSpriteSheet();
+            for (line = 0; line < enemy.length; line ++) {
+                enemy[line].UpdateSpriteSheet();
+            }
             
             //This sleep is equals for all threads
             try {

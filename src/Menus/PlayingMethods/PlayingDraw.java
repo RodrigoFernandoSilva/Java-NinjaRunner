@@ -4,9 +4,10 @@ package Menus.PlayingMethods;
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.enemy;
+import static Main.Main.floor;
 import static Main.Main.ninja;
 import static Main.Main.playing;
-import static Main.Main.floor;
+import static Main.Main.someMethods;
 import static Main.Main.water;
 import static Main.Main.window;
 
@@ -24,6 +25,7 @@ public class PlayingDraw extends Thread {
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
         
+        int line; //Its is used in 'for'.
         while (playing.GetIsPlaying()) {
             
             playing.DrawBackground();
@@ -31,6 +33,8 @@ public class PlayingDraw extends Thread {
             water.DrawWater();
             
             floor.DrawObjects();
+            
+            ninja.DrawKunai();
             
             floor.DrawLeftFloor();
             floor.DrawRightFloor();
@@ -41,8 +45,20 @@ public class PlayingDraw extends Thread {
             if (!ninja.GetNinjaKeyboard().changeAnimation)
                 ninja.DrawSpriteSheet();
             
-            playing.DrawPlayingWindow();
-            enemy.DrawSpriteSheet();
+            //playing.DrawPlayingWindow();
+            
+            for (line = 0; line < enemy.length; line ++) {
+                if (enemy[line].GetFather() >= 0) {
+                    enemy[line].DrawSpriteSheet();
+                }
+            }
+            
+            playing.DrawHUD();
+            
+            someMethods.DrawNumbersOnMiddle(ninja.coin, playing.GetCoinHUD(), 16.5f, 0);
+            someMethods.DrawNumbersOnMiddle(ninja.enemy, playing.GetEnemyHUD(), 16.5f, 0);
+            someMethods.DrawNumbersOnMiddle(ninja.kunai, playing.GetKunaiHUD(), 16.5f, 0);
+            someMethods.DrawNumbersOnMiddle(ninja.meters, playing.GetMetersHUD(), 16.5f, 0);
             
             window.update();
             

@@ -37,7 +37,7 @@ public class Main {
     public static Window window;
     
     //Classe variables
-    public static Enemy enemy;
+    public static Enemy[] enemy;
     public static Ninja ninja;
     public static Floor floor;
     public static Playing playing;

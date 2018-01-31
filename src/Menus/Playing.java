@@ -47,14 +47,22 @@ public class Playing {
     private double speed = 50; //50
     private double subSpeedMax;
     private final String FILE_WAY = "Images/Playing/"; //These variables is going to be used to initialize others variables
+    /**
+     * It is used in 'for'.
+     */
+    public int line;
     
     //Jplay variables
-    public GameImage[] background;
+    private GameImage[] background;
+    private GameImage coinHUD;
+    private GameImage enemyHUD;
+    private GameImage kunaiHUD;
+    private GameImage metersHUD;
     
     //Classe variables
     private PlayingDraw playingDraw;
     private PlayingUpdate playingUpdate;
-    public PlayingWindow playingWindow;
+    private PlayingWindow playingWindow;
     
     @SuppressWarnings("SleepWhileInLoop")
     public void Playing() {
@@ -64,9 +72,24 @@ public class Playing {
         background[1].y = someMethods.SetPositionBelowWindow(background[1], window) - 60;
         background[0].y = someMethods.SetPositionBelowWindow(background[0], window);
         
+        coinHUD = new GameImage(FILE_WAY + "HUD/Coin.png");
+        coinHUD.x = 17;
+        coinHUD.y = 15;
+        
+        kunaiHUD = new GameImage(FILE_WAY + "HUD/Kunai.png");
+        kunaiHUD.x = coinHUD.x + coinHUD.x + coinHUD.width;
+        kunaiHUD.y = coinHUD.y;
+        
+        enemyHUD = new GameImage(FILE_WAY + "HUD/Enemy.png");
+        enemyHUD.x = coinHUD.x + kunaiHUD.x + kunaiHUD.width;
+        enemyHUD.y = coinHUD.y;
+        
+        metersHUD = new GameImage(FILE_WAY + "HUD/Meters.png");
+        metersHUD.x = coinHUD.x + enemyHUD.x + enemyHUD.width;
+        metersHUD.y = coinHUD.y;
+        
         subSpeedMax = 1 + ((background.length - 1) * 0.3);
         
-        int line; //It is used in 'for'
         double subSpeed; //It is used to make the backgrounds move in different speed
         //Game loop
         while (isPlaying) {
@@ -111,8 +134,11 @@ public class Playing {
         playingWindowOk = false;
         waterOk = false;
         
-        enemy = new Enemy();
-        enemy.start();
+        enemy = new Enemy[100];
+        for (line = 0; line < enemy.length; line ++) {
+            enemy[line] = new Enemy();
+            enemy[line].start();
+        }
         
         floor = new Floor();
         floor.start();
@@ -128,7 +154,7 @@ public class Playing {
         
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
-            if (ninjaOk & floorOk & waterOk & playingWindowOk & enemyOk) {
+            if (ninjaOk && floorOk && waterOk && playingWindowOk && enemyOk) {
                 break;
             }
             
@@ -164,6 +190,13 @@ public class Playing {
         }
     }
     
+    public void DrawHUD() {
+        coinHUD.draw();
+        enemyHUD.draw();
+        kunaiHUD.draw();
+        metersHUD.draw();
+    }
+    
     public void DrawPlayingWindow() {
         playingWindow.DrawCamera();
     }
@@ -178,6 +211,22 @@ public class Playing {
     
     public boolean GetIsPlaying() {
         return isPlaying;
+    }
+    
+    public GameImage GetCoinHUD() {
+        return coinHUD;
+    }
+    
+    public GameImage GetEnemyHUD() {
+        return enemyHUD;
+    }
+    
+    public GameImage GetKunaiHUD() {
+        return kunaiHUD;
+    }
+    
+    public GameImage GetMetersHUD() {
+        return metersHUD;
     }
     
     public PlayingWindow GetPlayingWindow() {

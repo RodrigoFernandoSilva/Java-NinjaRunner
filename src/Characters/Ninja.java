@@ -32,13 +32,18 @@ public class Ninja extends Characters {
     public double jumpForce;
     public double velocityY = 0;
     private final double GRAVITY = 0.098;
-    private final double JUMP_FORCE = 5.3;
+    private final double JUMP_FORCE = 5.5;
     private final String FILE_WAY = "Images/Playing/Ninja/";
-    public int line;
+    private int line;
+    public int coin;
+    public int enemy;
+    public int kunai;
+    public int meters;
     
     //Classe variables
     private NinjaAnimation ninjaAnimation;
     private NinjaKeyboard ninjaKeyboard;
+    private NinjaKunai[] ninjaKunai;
     
     @Override
     public void run() {
@@ -51,6 +56,11 @@ public class Ninja extends Characters {
         
         y = 0;
         
+        coin = 0;
+        enemy = 0;
+        kunai = 6000;
+        meters = 0;
+        
         soul = new Sprite(FILE_WAY + "soul.png");
         spriteSheet = new Animation[3];
         spriteSheet[0] = new Animation(FILE_WAY + "SpriteSheet1.png", 31);
@@ -59,6 +69,8 @@ public class Ninja extends Characters {
         
         spriteAdjustX = new int[spriteSheet.length][3];
         spriteAdjustY = new int[spriteSheet.length][3];
+        
+        ninjaKunai = new NinjaKunai[20];
         
         //Start all ninja threads
         ninjaAnimation = new NinjaAnimation();
@@ -71,7 +83,7 @@ public class Ninja extends Characters {
         
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
-            if (ninjaAnimationOk & ninjaKeyboardOk) {
+            if (ninjaAnimationOk && ninjaKeyboardOk) {
                 break;
             }
 
@@ -105,11 +117,11 @@ public class Ninja extends Characters {
         while (playing.GetIsPlaying()) {
             
             //Makes the ninja fall faster or slower in some cases
-            if (!ninjaKeyboard.keyUpIsDown & ninjaKeyboard.isJumping) { //Falter
+            if (!ninjaKeyboard.keyUpIsDown && (ninjaKeyboard.isJumping || ninjaKeyboard.isJumpAttack || ninjaKeyboard.isJumpThrow)) { //Faster
                 jumpForce = 4;
-            } else if (ninjaKeyboard.isGliding & ninjaKeyboard.keySpaceIsDown) { //Falter
+            } else if (ninjaKeyboard.isGliding && ninjaKeyboard.keySpaceIsDown) { //Slower
                 jumpForce = 0.4;
-            } else if (ninjaKeyboard.isGliding & !ninjaKeyboard.keySpaceIsDown) { //Slower
+            } else if (ninjaKeyboard.isGliding && !ninjaKeyboard.keySpaceIsDown) { //Faster
                 jumpForce = 4;
             }
             
@@ -118,7 +130,8 @@ public class Ninja extends Characters {
             jumpApplyForce(jumpForce);
             soul.y = y - soul.height;
             
-            if (onFloor & y < ninjaFloor) {
+            if (onFloor && y < ninjaFloor + playing.GetPlayingWindow().camera.y) {
+                velocityY = 0;
                 onFloor = false;
             }
             
@@ -153,8 +166,14 @@ public class Ninja extends Characters {
     }
     
     /*----  Classe methods  ----*/
+    /**
+     * Makes the ninja jump, but when it passes from the middle of the windows, the scene needs
+     * move down.
+     * 
+     * @param force 
+     */
     private void jumpApplyForce(double force) {
-        if (isJumping | (!isJumping & !onFloor)) {
+        if (isJumping || (!isJumping && !onFloor)) {
             velocityY += (GRAVITY * force);
             
             if (y + (soul.height / 4) - playing.GetPlayingWindow().camera.y > playing.GetPlayingWindow().camera.height / 2) {
@@ -165,7 +184,7 @@ public class Ninja extends Characters {
                 playing.GetPlayingWindow().ApplyForceOnCamera(velocityY);
             }
             
-            if (velocityY > 0 & y > ninjaFloor + playing.GetPlayingWindow().camera.y) {
+            if (velocityY > 0 && y > ninjaFloor + playing.GetPlayingWindow().camera.y) {
                 onFloor = true;
                 isJumping = false;
                 y = ninjaFloor + playing.GetPlayingWindow().camera.y;
@@ -179,6 +198,10 @@ public class Ninja extends Characters {
             onFloor = false;
             velocityY = -JUMP_FORCE;
         }
+    }
+    
+    public void JumpForceReset() {
+        jumpForce = 1;
     }
     
     private void InitializeSpriteAdjust() {
@@ -208,8 +231,9 @@ public class Ninja extends Characters {
         spriteAdjustY[2][1] = -30;
     }
     
-    public void JumpForceReset() {
-        jumpForce = 1;
+    public void StartNinjaKeyboard() {
+        ninjaKeyboard = new NinjaKeyboard();
+        ninjaKeyboard.start();
     }
     
     public void SetNinjaAnimationOk(boolean value) {
@@ -220,6 +244,14 @@ public class Ninja extends Characters {
         ninjaKeyboardOk = value;
     }
     
+    public boolean GetIsJumping() {
+        return isJumping;
+    }
+    
+    public boolean GetOnFloor() {
+        return onFloor;
+    }
+    
     public NinjaAnimation GetNinjaAnimation() {
         return ninjaAnimation;
     }
@@ -228,17 +260,42 @@ public class Ninja extends Characters {
         return ninjaKeyboard;
     }
     
-    public void StartNinjaKeyboard() {
-        ninjaKeyboard = new NinjaKeyboard();
-        ninjaKeyboard.start();
+    /**
+     * Returns all vector.
+     * 
+     * @return 
+     */
+    public NinjaKunai[] GetNinjaKunai() {
+        return ninjaKunai;
     }
     
-    public boolean GetIsJumping() {
-        return isJumping;
+    /**
+     * Returns one position of the vector.
+     * 
+     * @param index
+     * @return 
+     */
+    public NinjaKunai GetNinjaKunai(int index) {
+        return ninjaKunai[index];
     }
     
-    public boolean GetOnFloor() {
-        return onFloor;
+    public void ThrowKunai() {
+        for (int i = 0; i < ninjaKunai.length; i ++) {
+            if (ninjaKunai[i] == null || ninjaKunai[i].getState() == State.TERMINATED) {
+                ninjaKunai[i] = new NinjaKunai();
+                ninjaKunai[i].start();
+                ninjaKunai[i].SetInitialPosition(soul.x + 30, soul.y + 53);
+                break;
+            }
+        }
+    }
+    
+    public void DrawKunai() {
+        for (NinjaKunai index : ninjaKunai) {
+            if (index != null && index.getState() == State.TIMED_WAITING) {
+                index.DrawKunai();
+            }
+        }
     }
     
 }

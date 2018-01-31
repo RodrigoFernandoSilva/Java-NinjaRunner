@@ -60,12 +60,23 @@ public class PlayingWindow extends Thread {
             }
             positionY -= camera.y;
             
-            //Puts the objects that are on the scene on the camera position
-            enemy.spriteSheet[enemy.spriteSheetEnable].y = camera.y + enemy.y;
+            
+            //Puts the objects that is on the scene on the camera position
+            for (line = 0; line < enemy.length; line ++) {
+                enemy[line].spriteSheet[enemy[line].spriteSheetEnable].y = camera.y + enemy[line].y;
+            }
+            
             for (line = 0; line < floor.floorLeft.length; line ++) {
                 floor.floorLeft[line].y = camera.y + floor.y[line];
             }
+            
             water.water.y = camera.y + water.y;
+            
+            for (line = 0; line < ninja.GetNinjaKunai().length; line ++) {
+                if (ninja.GetNinjaKunai(line) != null && ninja.GetNinjaKunai(line).getState() == State.TIMED_WAITING) {
+                    ninja.GetNinjaKunai(line).SetY(ninja.GetNinjaKunai(line).y + camera.y);
+                }
+            }
             
             //This sleep is equals for all threads
             try {

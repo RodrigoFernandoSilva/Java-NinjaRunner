@@ -19,10 +19,56 @@ import javax.swing.JOptionPane;
  */
 public class SomeMethods {
     
+    private final Animation NUMBERS = new Animation("Images/Playing/HUD/Numbers/Numbers.png",11);
+    
+    public void DrawNumbersOnMiddle(int value, GameImage imageBase, double adjustX, double adjustY) {
+        String valueStr = String.valueOf(value);
+        
+        NUMBERS.x = imageBase.x + (imageBase.width / 2);
+        NUMBERS.x -= ((16 * valueStr.length()) / 2);
+        NUMBERS.y = imageBase.y + (imageBase.height / 2);
+        NUMBERS.y -= NUMBERS.height /2;
+        
+        NUMBERS.x += adjustX;
+        NUMBERS.y += adjustY;
+        
+        for (int i = 0; i < valueStr.length(); i ++) {
+            NUMBERS.setCurrFrame((((int) valueStr.charAt(i)) - 48));
+            NUMBERS.draw();
+            NUMBERS.x += 16;
+        }
+    }
+    
     public boolean ExitWindow(Animation image, double addition) {
         return (image.x + image.width + addition) < 0;
     }
-            
+    
+    public boolean ExitWindow(GameImage image, double addition) {
+        return (image.x + image.width + addition) < 0;
+    }
+    
+    /**
+     * Return the if the image that was passed is on the scene, or inside the camera.
+     * 
+     * @param imagem
+     * @param window
+     * @return 
+     */
+    public boolean IsOnScene(Animation imagem, Window window) {
+        return (imagem.x < window.getWidth() && (imagem.x + imagem.width) > 0);
+    }
+    
+    /**
+     * Return the if the image that was passed is on the scene, or inside the camera.
+     * 
+     * @param imagem
+     * @param window
+     * @return 
+     */
+    public boolean IsOnScene(GameImage imagem, Window window) {
+        return (imagem.x < window.getWidth() && (imagem.x + imagem.width) > 0);
+    }
+    
     public double SetPositionBelowWindow(Animation image, Window window) {
         return window.getHeight() - image.height;
     }
@@ -41,7 +87,7 @@ public class SomeMethods {
      * @param part
      * @return double
      */
-    public double PutImageOnMiddle (GameImage imageToPut, Animation imageBase, int additionLenght, int numberObject, int part) {
+    public double PutImageOnMiddle (GameImage imageToPut, GameImage imageBase, int additionLenght, int numberObject, int part) {
         double value;
         double lenght = ((imageBase.width + additionLenght) / numberObject);
         
