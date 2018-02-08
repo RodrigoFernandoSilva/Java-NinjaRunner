@@ -67,8 +67,8 @@ public class Ninja extends Characters {
         spriteSheet[1] = new Animation(FILE_WAY + "SpriteSheet2.png", 31);
         spriteSheet[2] = new Animation(FILE_WAY + "SpriteSheet3.png", 21);
         
-        spriteAdjustX = new int[spriteSheet.length][3];
-        spriteAdjustY = new int[spriteSheet.length][3];
+        spriteAdjustX = new double[spriteSheet.length][3];
+        spriteAdjustY = new double[spriteSheet.length][3];
         
         ninjaKunai = new NinjaKunai[20];
         
@@ -114,7 +114,15 @@ public class Ninja extends Characters {
         
         y = (floor.GetFirstFloorY());
         
+        int temp = 0;
+        
         while (playing.GetIsPlaying()) {
+            
+            if (temp > (150 - playing.GetSpeed() * 0.96)) {
+                meters++;
+                temp = 0;
+            }
+            temp ++;
             
             //Makes the ninja fall faster or slower in some cases
             if (!ninjaKeyboard.keyUpIsDown && (ninjaKeyboard.isJumping || ninjaKeyboard.isJumpAttack || ninjaKeyboard.isJumpThrow)) { //Faster
@@ -284,7 +292,7 @@ public class Ninja extends Characters {
             if (ninjaKunai[i] == null || ninjaKunai[i].getState() == State.TERMINATED) {
                 ninjaKunai[i] = new NinjaKunai();
                 ninjaKunai[i].start();
-                ninjaKunai[i].SetInitialPosition(soul.x + 30, soul.y + 53);
+                ninjaKunai[i].SetInitialPosition(soul.x + 30, soul.y + 53 - playing.GetPlayingWindow().camera.y);
                 break;
             }
         }

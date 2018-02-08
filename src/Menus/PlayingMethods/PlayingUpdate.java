@@ -28,7 +28,9 @@ public class PlayingUpdate extends Thread {
                 ninja.UpdateSpriteSheet();
             
             for (line = 0; line < enemy.length; line ++) {
-                enemy[line].UpdateSpriteSheet();
+                if (enemy[line] != null && enemy[line].isOk) {
+                    enemy[line].UpdateSpriteSheet();
+                }
             }
             
             //This sleep is equals for all threads

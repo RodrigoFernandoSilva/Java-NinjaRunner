@@ -44,8 +44,10 @@ public class Playing {
     public boolean ninjaOk;
     public boolean playingWindowOk;
     public boolean waterOk;
-    private double speed = 50; //50
+    private double speed = 150; //50
     private double subSpeedMax;
+    private int timeNextSpeed = 0;
+    private final int TIME_NEXT_SPEED = 50;
     private final String FILE_WAY = "Images/Playing/"; //These variables is going to be used to initialize others variables
     /**
      * It is used in 'for'.
@@ -94,6 +96,14 @@ public class Playing {
         //Game loop
         while (isPlaying) {
             
+            if (speed < 150) {
+                if (timeNextSpeed > TIME_NEXT_SPEED) {
+                    speed ++;
+                    timeNextSpeed = 0;
+                }
+                timeNextSpeed++;
+            }
+            
             //Move the background
             subSpeed = 1;
             for (line = 0; line < background.length; line ++) {
@@ -134,11 +144,7 @@ public class Playing {
         playingWindowOk = false;
         waterOk = false;
         
-        enemy = new Enemy[100];
-        for (line = 0; line < enemy.length; line ++) {
-            enemy[line] = new Enemy();
-            enemy[line].start();
-        }
+        enemy = new Enemy[20];
         
         floor = new Floor();
         floor.start();
@@ -154,7 +160,7 @@ public class Playing {
         
         //Wait some threads be created for do not have 'NullPointerExeption'
         while (true) {
-            if (ninjaOk && floorOk && waterOk && playingWindowOk && enemyOk) {
+            if (ninjaOk && floorOk && waterOk && playingWindowOk) {
                 break;
             }
             

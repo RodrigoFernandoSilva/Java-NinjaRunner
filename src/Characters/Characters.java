@@ -18,8 +18,8 @@ public class Characters extends Thread {
     //Java variables
     public int spriteSheetEnable; //It for known which sprite sheet is going to be draw and update
     public int animationSpeed;
-    public int[][] spriteAdjustX;
-    public int[][] spriteAdjustY;
+    public double[][] spriteAdjustX;
+    public double[][] spriteAdjustY;
     public double x;
     public double y;
     
@@ -46,6 +46,10 @@ public class Characters extends Thread {
     
     public Sprite GetSoul() {
         return soul;
+    }
+    
+    public Animation GetSpriteSheetEnable() {
+        return spriteSheet[spriteSheetEnable];
     }
     
     /**

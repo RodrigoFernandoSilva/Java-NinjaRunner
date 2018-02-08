@@ -2,7 +2,6 @@
 package Plataform;
 
 //Jplay imports
-import Characters.Enemy;
 import jplay.Animation;
 import jplay.GameImage;
 
@@ -14,6 +13,9 @@ import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
 import static Main.Main.window;
+
+//Classes imports
+import Characters.Enemy;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -167,12 +169,12 @@ public class Floor extends Thread {
                 floorLeft[line].x = floorLeft[line - 1].x + floorLeft[line - 1].width + (floorRight.width * 2);
                 floorLeft[line].x += (generator.nextInt(5) * floorRight.width); //Distance between the floors
                 floorLeft[line].width = (generator.nextInt(20) + 1) * floorRight.width;
-
+                //floorLeft[line].width = (19) * floorRight.width;
             } else {
                 floorBockNumber[line] = generator.nextInt(2) + 1;
                 //floorBockNumber[line] = 7;
                 floorLeft[line].width = (generator.nextInt(6) + 6) * floorRight.width;
-                //floorLeft[line].width = 400;
+                floorLeft[line].width = 400;
                 enemyGenerated[line] = true;
             }
             
@@ -238,19 +240,96 @@ public class Floor extends Thread {
      * @param index 
      */
     private void GenerateEnemy(int index) {
-        for (int i = 0; i < enemy.length; i ++) {
-            if (enemy[i].GetFather() < 0) {
-                GenerateEnemyPositionX(i, index);
-                enemy[i].SetY(y[index]);
-                enemy[i].SetFather(index);
+        for (Enemy enemy1 : enemy) {
+            if (enemy[line] == null) {
+                GenerateEnemyPositionX(index);
                 break;
             }
         }
     }
     
-    private void GenerateEnemyPositionX(int enemyIndex, int floorIndex) {
-        if (floorBockNumber[floorIndex] != 1) {
-            enemy[enemyIndex].SetX(128);
+    private void GenerateEnemyPositionX(int floorIndex) {
+        int numberOfBLocks = (int) (Math.round(floorLeft[floorIndex].width / floorRight.width));
+        
+        //It hava 40% chance for the ninja be spawn    && generator.nextInt(10) <= 3
+        if (numberOfBLocks > 2) {
+            if (numberOfBLocks <= 4) {
+                InitializeEnemy(floorIndex, floorLeft[floorIndex].width - 15, y[floorIndex]);
+            } else if (numberOfBLocks == 5) {
+                InitializeEnemy(floorIndex, floorLeft[floorIndex].width - 15 - (generator.nextInt(100)), y[floorIndex]);
+            } else if (numberOfBLocks <= 7) {
+                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
+                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                if (generator.nextInt(10) <= 4) {
+                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        x -= 118;
+                    } else {
+                        x += 118;
+                    }
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                }
+            } else if (numberOfBLocks <= 12) {
+                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
+                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                if (generator.nextInt(10) <= 6) {
+                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        x -= 118;
+                    } else {
+                        x += 118;
+                    }
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                }
+            } else if (numberOfBLocks <= 17) {
+                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
+                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                if (generator.nextInt(10) <= 8) {
+                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        x -= 118;
+                    } else {
+                        x += 118;
+                    }
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                }
+            } else if (numberOfBLocks > 17) {
+                boolean startOrEnd = generator.nextBoolean();
+                
+                if (startOrEnd) {
+                    double x = 182f + generator.nextInt(182);
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    if (generator.nextBoolean()) { 
+                        x += 118;
+                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    }
+                } else if (!startOrEnd) {
+                    double x = (floorLeft[floorIndex].width - 182) - 15f;
+                    x -= generator.nextInt(182);
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    if (generator.nextBoolean()) { 
+                        x += 118;   
+                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    }
+                }
+                
+                //Enemy on the middle
+                if (generator.nextBoolean()) { 
+                    double x = ((floorLeft[floorIndex].width / 2));
+                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    if (generator.nextBoolean()) { 
+                        x += 118;   
+                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void InitializeEnemy(int father, double x, double y) {
+        for (int i0 = 0; i0 < enemy.length; i0++) {
+            if (enemy[i0] == null) {
+                enemy[i0] = new Enemy(father, x, y, i0);
+                enemy[i0].start();
+                break;
+            }
         }
     }
     
@@ -310,6 +389,10 @@ public class Floor extends Thread {
         }
         
         return false;
+    }
+    
+    public void SetNullEnemyThread(int index) {
+        enemy[index] = null;
     }
     
 }

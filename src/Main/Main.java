@@ -17,6 +17,7 @@ import Characters.Ninja;
 import Menus.Playing;
 import Plataform.Floor;
 import Plataform.Water;
+import Menus.Menu;
 
 //Others imports
 import com.sun.glass.events.KeyEvent;
@@ -45,6 +46,8 @@ public class Main {
     public static Water water;
     
     public static void main(String[] args) {
+        
+        Menu menu = new Menu();
         
         //window = new Window(1280, 720);
         window = new Window(800, 600);
@@ -76,6 +79,8 @@ public class Main {
         window.setIconImage(imageIcon.getImage());
         
         while (isRunning) {
+            
+            //menu.Menu();
             
             playing.InitializeVariables();
             playing.InitializeThreads();

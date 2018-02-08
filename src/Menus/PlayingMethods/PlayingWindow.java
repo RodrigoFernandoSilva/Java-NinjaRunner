@@ -63,7 +63,9 @@ public class PlayingWindow extends Thread {
             
             //Puts the objects that is on the scene on the camera position
             for (line = 0; line < enemy.length; line ++) {
-                enemy[line].spriteSheet[enemy[line].spriteSheetEnable].y = camera.y + enemy[line].y;
+                if (enemy[line] != null && enemy[line].isOk) {
+                    enemy[line].spriteSheet[enemy[line].spriteSheetEnable].y = camera.y + enemy[line].y - enemy[line].spriteAdjustY[enemy[line].spriteSheetEnable][0];
+                }
             }
             
             for (line = 0; line < floor.floorLeft.length; line ++) {

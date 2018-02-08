@@ -48,7 +48,7 @@ public class PlayingDraw extends Thread {
             //playing.DrawPlayingWindow();
             
             for (line = 0; line < enemy.length; line ++) {
-                if (enemy[line].GetFather() >= 0) {
+                if (enemy[line] != null && enemy[line].isOk && enemy[line].wasPutOnPosition) {
                     enemy[line].DrawSpriteSheet();
                 }
             }

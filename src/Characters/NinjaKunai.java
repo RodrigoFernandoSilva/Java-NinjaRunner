@@ -2,11 +2,13 @@
 package Characters;
 
 //Jplay imports
+import jplay.Animation;
 import jplay.GameImage;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.enemy;
 import static Main.Main.floor;
 import static Main.Main.ninja;
 import static Main.Main.playing;
@@ -24,6 +26,7 @@ public class NinjaKunai extends Thread {
     
     //Java variables
     private boolean canDraw = false;
+    private boolean isAlive = true;
     private final double SPEED = 250;
     public double y;
     private final String FILE_WAY = "Images/Playing/Ninja/";
@@ -33,6 +36,8 @@ public class NinjaKunai extends Thread {
     
     @Override
     public void run() {
+        
+        int line;
         
         //Waits the frame of the ninja be the frame that the kunais is leave his hand.
         while (true) {
@@ -53,7 +58,21 @@ public class NinjaKunai extends Thread {
             
             kunai.x += (playing.GetSpeed() + SPEED) * deltaTime;
             
+            for (line = 0; line < enemy.length; line++) {
+                if (enemy[line] != null && enemy[line].isOk && enemy[line].spriteSheetEnable == 0 && kunai.collided(enemy[line].GetSpriteSheetEnable())) {
+                    enemy[line].spriteSheetEnable = 1;
+                    enemy[line].x -= enemy[line].spriteSheet[1].width / 2;
+                    enemy[line].wasPutOnPosition = false;
+                    isAlive = false;
+                    ninja.enemy++;
+                    break;
+                }
+            }
+            
             if (kunai.x > window.getWidth() + window.getWidth() / 2 || floor.Hit(kunai)) {
+                break;
+            }
+            if (!isAlive) {
                 break;
             }
             
