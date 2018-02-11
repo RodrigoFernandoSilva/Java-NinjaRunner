@@ -11,6 +11,8 @@ import static Main.Main.playing;
 
 //Others imports
 import static java.lang.Thread.sleep;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -109,6 +111,19 @@ public class SomeMethods {
                 sleep(100);
             } catch (InterruptedException ex) {
                 JOptionPane.showMessageDialog(null, "Maybe the game crash in loading because: " + ex.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Pause the game.
+     */
+    public void PauseTheGame() {
+        while (playing.isPaused) {
+            try {
+                sleep(1);
+            } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(null, "Maybe the game crash because: " + ex.getMessage());
             }
         }
     }

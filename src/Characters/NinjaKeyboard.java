@@ -45,64 +45,68 @@ public class NinjaKeyboard extends Thread{
         
         while (playing.GetIsPlaying()) {
             
-            keyUpIsDown = keyboard.keyDown(KeyEvent.VK_UP);
             keySpaceIsDown = keyboard.keyDown(KeyEvent.VK_SPACE);
             
-            if (keySpaceIsDown) {
-                if (!isAnyAttack && !isGliding && !ninja.GetOnFloor()&& !changeAnimation && ninja.velocityY != 0) {
-                    SetFalseBoolean();
-                    isGliding = true;
-                    changeAnimation = true;
-                }
-            }
-            if (keyUpIsDown && ninja.GetOnFloor()) {
-                //If the ninja jump during floor attack, the animation need be change to jump attack,
-                //but in the same frame
-                if (!isJumping && !changeAnimation && !animationTransition && (isRunAttack || isRunThrow)) {
-                    animationTransition = true;
-                    ninja.SetIsJumping(true);
-                } else if (!isJumping && (isRunning || isRunAttack || isRunThrow || isSliding)) { //The ninja jumped but was not attacking
-                    SetFalseBoolean();
-                    isJumping = true;
-                    changeAnimation = true;
-                    ninja.SetIsJumping(true);
-                }
-            }
-            if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
-                if (!changeAnimation && isRunning) {
-                    SetFalseBoolean();
-                    isSliding = true;
-                    changeAnimation = true;
-                }
-            } else if (keyboard.keyDown(KeyEvent.VK_X)) {
-                if (ninja.kunai > 0) {
-                    ninja.kunai --;
-                    if (!changeAnimation && isRunning) {
+            if (!playing.isPaused) {
+                
+                keyUpIsDown = keyboard.keyDown(KeyEvent.VK_UP);
+                
+                if (keySpaceIsDown) {
+                    if (!isAnyAttack && !isGliding && !ninja.GetOnFloor()&& !changeAnimation && ninja.velocityY != 0) {
                         SetFalseBoolean();
-                        isRunThrow = true;
+                        isGliding = true;
                         changeAnimation = true;
-                        isAnyAttack = true;
-                        ninja.ThrowKunai();
-                    } else if (!changeAnimation && isJumping) {
-                        SetFalseBoolean();
-                        isJumpThrow = true;
-                        changeAnimation = true;
-                        isAnyAttack = true;
-                        ninja.ThrowKunai();
-
                     }
                 }
-            } else if (keyboard.keyDown(KeyEvent.VK_Z)) {
-                if (!changeAnimation && isRunning) {
-                    SetFalseBoolean();
-                    isRunAttack = true;
-                    changeAnimation = true;
-                    isAnyAttack = true;
-                } else if (!changeAnimation && isJumping) {
-                    SetFalseBoolean();
-                    isJumpAttack = true;
-                    changeAnimation = true;
-                    isAnyAttack = true;
+                if (keyUpIsDown && ninja.GetOnFloor()) {
+                    //If the ninja jump during floor attack, the animation need be change to jump attack,
+                    //but in the same frame
+                    if (!isJumping && !changeAnimation && !animationTransition && (isRunAttack || isRunThrow)) {
+                        animationTransition = true;
+                        ninja.SetIsJumping(true);
+                    } else if (!isJumping && (isRunning || isRunAttack || isRunThrow || isSliding)) { //The ninja jumped but was not attacking
+                        SetFalseBoolean();
+                        isJumping = true;
+                        changeAnimation = true;
+                        ninja.SetIsJumping(true);
+                    }
+                }
+                if (keyboard.keyDown(KeyEvent.VK_DOWN)) {
+                    if (!changeAnimation && isRunning) {
+                        SetFalseBoolean();
+                        isSliding = true;
+                        changeAnimation = true;
+                    }
+                } else if (keyboard.keyDown(KeyEvent.VK_X)) {
+                    if (ninja.kunai > 0) {
+                        ninja.kunai --;
+                        if (!changeAnimation && isRunning) {
+                            SetFalseBoolean();
+                            isRunThrow = true;
+                            changeAnimation = true;
+                            isAnyAttack = true;
+                            ninja.ThrowKunai();
+                        } else if (!changeAnimation && isJumping) {
+                            SetFalseBoolean();
+                            isJumpThrow = true;
+                            changeAnimation = true;
+                            isAnyAttack = true;
+                            ninja.ThrowKunai();
+
+                        }
+                    }
+                } else if (keyboard.keyDown(KeyEvent.VK_Z)) {
+                    if (!changeAnimation && isRunning) {
+                        SetFalseBoolean();
+                        isRunAttack = true;
+                        changeAnimation = true;
+                        isAnyAttack = true;
+                    } else if (!changeAnimation && isJumping) {
+                        SetFalseBoolean();
+                        isJumpAttack = true;
+                        changeAnimation = true;
+                        isAnyAttack = true;
+                    }
                 }
             }
             

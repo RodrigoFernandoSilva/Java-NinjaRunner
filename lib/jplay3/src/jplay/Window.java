@@ -240,7 +240,7 @@ public class Window extends JFrame{
     public void setDisplayMode(DisplayMode displayMode)
     {
             if ( isDisplayModeCompatible(displayMode)  == false){
-                JOptionPane.showMessageDialog(null, "Resolution is not compatible with this display.");
+                //JOptionPane.showMessageDialog(null, "Resolution is not compatible with this display.");
             }
             else{
                 this.displayMode = displayMode;

@@ -1,6 +1,9 @@
 
 package Characters;
 
+//Jplay imports
+import jplay.Animation;
+
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.floor;
@@ -10,7 +13,6 @@ import static Main.Main.someMethods;
 
 //Others imports
 import javax.swing.JOptionPane;
-import jplay.Animation;
 
 /**
  *
@@ -20,7 +22,7 @@ public class Enemy extends Characters {
     
     private final int ANIMATION_SPEED = 900;
     private int father = -1;
-    private final int myId;
+    private final int MY_ID;
     public boolean isOk = false;
     public boolean wasPutOnPosition = false;
     private final String FILE_WAY = "Images/Playing/Enemy/";
@@ -29,7 +31,7 @@ public class Enemy extends Characters {
         this.father = father;
         this.x = x;
         this.y = y;
-        this.myId = myId;
+        this.MY_ID = myId;
     }
     
     @Override
@@ -56,6 +58,8 @@ public class Enemy extends Characters {
         
         isOk = true;
         while (playing.GetIsPlaying()) {
+            
+            someMethods.PauseTheGame();
             
             spriteSheet[spriteSheetEnable].x = floor.floorLeft[father].x + x;
             
@@ -84,7 +88,7 @@ public class Enemy extends Characters {
             
         }
         
-        floor.SetNullEnemyThread(myId);
+        floor.SetNullEnemyThread(MY_ID);
         
     }
     

@@ -6,8 +6,10 @@ import jplay.GameImage;
 
 //Variables impors
 import static Main.DeltaTime.allThreadSleep;
+import static Main.Main.coinThread;
 import static Main.Main.enemy;
 import static Main.Main.floor;
+import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
@@ -65,6 +67,18 @@ public class PlayingWindow extends Thread {
             for (line = 0; line < enemy.length; line ++) {
                 if (enemy[line] != null && enemy[line].isOk) {
                     enemy[line].spriteSheet[enemy[line].spriteSheetEnable].y = camera.y + enemy[line].y - enemy[line].spriteAdjustY[enemy[line].spriteSheetEnable][0];
+                }
+            }
+            
+            for (line = 0; line < coinThread.length; line ++) {
+                if (coinThread[line] != null && coinThread[line].isOk) {
+                    coinThread[line].COIN.y = camera.y + coinThread[line].y;
+                }
+            }
+            
+            for (line = 0; line < kunaiThead.length; line ++) {
+                if (kunaiThead[line] != null && kunaiThead[line].isOk) {
+                    kunaiThead[line].COIN.y = camera.y + kunaiThead[line].y;
                 }
             }
             

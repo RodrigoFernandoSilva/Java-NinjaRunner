@@ -30,6 +30,7 @@ public class Menu {
     private final GameImage background = new GameImage(FILE_WAY + "/Background.png");
     
     private final GameImage[] tutorialImages = new GameImage[7];
+    private final GameImage tutorialBc = new GameImage(FILE_WAY + "Tutorial/Tutorial_BC.png");
     private final GameImage anterios = new GameImage(FILE_WAY + "Buttons/Anterios.png");
     private final GameImage proximo = new GameImage(FILE_WAY + "Buttons/Proximo.png");
     private final GameImage finalizar = new GameImage(FILE_WAY + "Buttons/Finalizar.png");
@@ -42,8 +43,12 @@ public class Menu {
         for (line = 0; line < tutorialImages.length; line ++) {
             tutorialImages[line] = new GameImage(FILE_WAY + "Tutorial/Tutorial_" + String.valueOf(line + 1) + ".png");
             tutorialImages[line].width = window.getWidth();
-            tutorialImages[line].height = window.getHeight();
+            tutorialImages[line].height = (tutorialImages[line].width * 896) / 1732;
+            tutorialImages[line].y = (window.getHeight() - tutorialImages[line].height) / 2;
+            
         }
+        tutorialBc.width = window.getWidth();
+        tutorialBc.height = window.getHeight();
         
         menu.x = ((window.getWidth() - menu.width) / 2);
         menu.y = ((window.getHeight()- menu.height) / 2);
@@ -103,6 +108,7 @@ public class Menu {
         
         while (index < 7) {
             
+            tutorialBc.draw();
             tutorialImages[index].draw();
             
             anterios.draw();

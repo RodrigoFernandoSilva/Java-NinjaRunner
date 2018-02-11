@@ -47,6 +47,8 @@ public class Water extends Thread {
         
         while (playing.GetIsPlaying()) {
             
+            someMethods.PauseTheGame();
+            
             speedUpDown = playing.GetSpeed() / 5;
             
             //Move the water

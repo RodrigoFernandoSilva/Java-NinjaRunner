@@ -2,13 +2,16 @@
 package Plataform;
 
 //Jplay imports
+import Characters.CoinThread;
 import jplay.Animation;
 import jplay.GameImage;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.coinThread;
 import static Main.Main.enemy;
+import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
@@ -16,6 +19,7 @@ import static Main.Main.window;
 
 //Classes imports
 import Characters.Enemy;
+import Characters.KunaiThead;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -78,6 +82,8 @@ public class Floor extends Thread {
         
         while (playing.GetIsPlaying()) {
             
+            someMethods.PauseTheGame();
+            
             speed = (playing.GetSpeed() * 1.3) * playing.GetSubSpeedMax();
             
             //Move the floor
@@ -90,7 +96,7 @@ public class Floor extends Thread {
                 
                 if (!enemyGenerated[line] && floorLeft[line].x < window.getWidth()) {
                     enemyGenerated[line] = true;
-                    GenerateEnemy(line);
+                    GenerateFloorSons(line);
                 }
             }
             
@@ -235,101 +241,132 @@ public class Floor extends Thread {
     }
     
     /**
-     * Generates the enemy that is going to be over the floor.
+     * Generates the son that is going to be over the floor. They can be the enemy,
+     * kunai or a coin.
      * 
      * @param index 
      */
-    private void GenerateEnemy(int index) {
+    private void GenerateFloorSons(int index) {
         for (Enemy enemy1 : enemy) {
             if (enemy[line] == null) {
-                GenerateEnemyPositionX(index);
+                GenerateSonsPositionX(index);
                 break;
             }
         }
     }
     
-    private void GenerateEnemyPositionX(int floorIndex) {
+    private void GenerateSonsPositionX(int floorIndex) {
         int numberOfBLocks = (int) (Math.round(floorLeft[floorIndex].width / floorRight.width));
         
-        //It hava 40% chance for the ninja be spawn    && generator.nextInt(10) <= 3
         if (numberOfBLocks > 2) {
             if (numberOfBLocks <= 4) {
-                InitializeEnemy(floorIndex, floorLeft[floorIndex].width - 15, y[floorIndex]);
+                InitializeObjects(floorIndex, floorLeft[floorIndex].width - 15, y[floorIndex]);
             } else if (numberOfBLocks == 5) {
-                InitializeEnemy(floorIndex, floorLeft[floorIndex].width - 15 - (generator.nextInt(100)), y[floorIndex]);
+                InitializeObjects(floorIndex, floorLeft[floorIndex].width - 15 - (generator.nextInt(100)), y[floorIndex]);
             } else if (numberOfBLocks <= 7) {
                 double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                InitializeObjects(floorIndex, x, y[floorIndex]);
                 if (generator.nextInt(10) <= 4) {
                     if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
                         x -= 118;
                     } else {
                         x += 118;
                     }
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
             } else if (numberOfBLocks <= 12) {
                 double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                InitializeObjects(floorIndex, x, y[floorIndex]);
                 if (generator.nextInt(10) <= 6) {
                     if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
                         x -= 118;
                     } else {
                         x += 118;
                     }
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
             } else if (numberOfBLocks <= 17) {
                 double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeEnemy(floorIndex, x, y[floorIndex]);
+                InitializeObjects(floorIndex, x, y[floorIndex]);
                 if (generator.nextInt(10) <= 8) {
                     if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
                         x -= 118;
                     } else {
                         x += 118;
                     }
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
             } else if (numberOfBLocks > 17) {
                 boolean startOrEnd = generator.nextBoolean();
                 
                 if (startOrEnd) {
                     double x = 182f + generator.nextInt(182);
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                     if (generator.nextBoolean()) { 
                         x += 118;
-                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                        InitializeObjects(floorIndex, x, y[floorIndex]);
                     }
                 } else if (!startOrEnd) {
                     double x = (floorLeft[floorIndex].width - 182) - 15f;
                     x -= generator.nextInt(182);
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                     if (generator.nextBoolean()) { 
                         x += 118;   
-                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                        InitializeObjects(floorIndex, x, y[floorIndex]);
                     }
                 }
                 
                 //Enemy on the middle
                 if (generator.nextBoolean()) { 
                     double x = ((floorLeft[floorIndex].width / 2));
-                    InitializeEnemy(floorIndex, x, y[floorIndex]);
+                    InitializeObjects(floorIndex, x, y[floorIndex]);
                     if (generator.nextBoolean()) { 
                         x += 118;   
-                        InitializeEnemy(floorIndex, x, y[floorIndex]);
+                        InitializeObjects(floorIndex, x, y[floorIndex]);
                     }
                 }
             }
         }
     }
     
-    public void InitializeEnemy(int father, double x, double y) {
-        for (int i0 = 0; i0 < enemy.length; i0++) {
-            if (enemy[i0] == null) {
-                enemy[i0] = new Enemy(father, x, y, i0);
-                enemy[i0].start();
-                break;
+    public void InitializeObjects(int father, double x, double y) {
+        @SuppressWarnings("UnusedAssignment")
+        String whatIs = null;
+        
+        if (generator.nextInt(10) < 5) {
+            whatIs = "Enemy";
+        } else if (generator.nextInt(10) < 5) {
+            whatIs = "Coin";
+        } else {
+            whatIs = "Kunai";
+        }
+        
+        if ("Enemy".equalsIgnoreCase(whatIs)) {
+            for (int i0 = 0; i0 < enemy.length; i0++) {
+                if (enemy[i0] == null) {
+                    enemy[i0] = new Enemy(father, x, y, i0);
+                    enemy[i0].start();
+                    break;
+                }
             }
+        } else if ("Coin".equalsIgnoreCase(whatIs)) {
+            for (int i0 = 0; i0 < coinThread.length; i0++) {
+                if (coinThread[i0] == null) {
+                    coinThread[i0] = new CoinThread(father, x, y, i0);
+                    coinThread[i0].start();
+                    break;
+                }
+            }
+        } else if ("Kunai".equalsIgnoreCase(whatIs)) {
+            for (int i0 = 0; i0 < kunaiThead.length; i0++) {
+                if (kunaiThead[i0] == null) {
+                    kunaiThead[i0] = new KunaiThead(father, x, y, i0);
+                    kunaiThead[i0].start();
+                    break;
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Programing erro, " + whatIs + " does not exist!!!");
         }
     }
     
@@ -391,8 +428,16 @@ public class Floor extends Thread {
         return false;
     }
     
+    public void SetNullCoinThread(int index) {
+        coinThread[index] = null;
+    }
+    
     public void SetNullEnemyThread(int index) {
         enemy[index] = null;
+    }
+    
+    public void SetNullKunaiThread(int index) {
+        kunaiThead[index] = null;
     }
     
 }

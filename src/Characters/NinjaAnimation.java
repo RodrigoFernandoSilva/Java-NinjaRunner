@@ -5,6 +5,7 @@ package Characters;
 import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.ninja;
 import static Main.Main.playing;
+import static Main.Main.someMethods;
 
 //Others imports
 import static java.lang.Thread.sleep;
@@ -38,6 +39,8 @@ public class NinjaAnimation extends Thread {
         ninja.SetNinjaAnimationOk(true);
         
         while (playing.GetIsPlaying()) {
+            
+            someMethods.PauseTheGame();
             
             if (ninja.GetNinjaKeyboard().changeAnimation) {
                 SetCorrectAnimation();

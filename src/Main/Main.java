@@ -12,7 +12,9 @@ import jplay.Mouse;
 import jplay.Window;
 
 //Classe imports
+import Characters.CoinThread;
 import Characters.Enemy;
+import Characters.KunaiThead;
 import Characters.Ninja;
 import Menus.Playing;
 import Plataform.Floor;
@@ -22,6 +24,7 @@ import Menus.Menu;
 //Others imports
 import com.sun.glass.events.KeyEvent;
 import javax.swing.ImageIcon;
+import jplay.GameImage;
 
 /**
  *
@@ -38,7 +41,9 @@ public class Main {
     public static Window window;
     
     //Classe variables
+    public static CoinThread[] coinThread;
     public static Enemy[] enemy;
+    public static KunaiThead[] kunaiThead;
     public static Ninja ninja;
     public static Floor floor;
     public static Playing playing;
@@ -50,9 +55,44 @@ public class Main {
         Menu menu = new Menu();
         
         //window = new Window(1280, 720);
-        window = new Window(800, 600);
+        window = new Window(300, 400);
         mouse = window.getMouse();
         keyboard = window.getKeyboard();
+        
+        GameImage longButton = new GameImage("Images/Others/Long.png");
+        GameImage shortButton = new GameImage("Images/Others/Short.png");
+        GameImage ChoseResolution = new GameImage("Images/Others/ChoseResolution.png");
+        
+        longButton.y = 188;
+        longButton.x = 12;
+        shortButton.y = longButton.y;
+        shortButton.x = 183;
+        
+        /*
+        while (true) {
+            
+            ChoseResolution.draw();
+            
+            longButton.draw();
+            shortButton.draw();
+            
+            window.update();
+            
+            if (mouse.isLeftButtonPressed()) {
+                if (mouse.isOverObject(longButton)) {
+                    window.setSize(1280, 720);
+                    break;
+                } else if (mouse.isOverObject(shortButton)) {
+                    window.setSize(800, 600);
+                    break;
+                }
+            }
+            
+            if (keyboard.keyDown(Keyboard.ESCAPE_KEY)) {
+                window.exit();
+            }
+        }*/
+        window.setSize(800, 600);
         
         playing = new Playing();
         
@@ -67,6 +107,7 @@ public class Main {
         keyboard.addKey(KeyEvent.VK_RIGHT, InputBase.DETECT_INITIAL_PRESS_ONLY);
         keyboard.addKey(KeyEvent.VK_Z, InputBase.DETECT_INITIAL_PRESS_ONLY);
         keyboard.addKey(KeyEvent.VK_X, InputBase.DETECT_INITIAL_PRESS_ONLY);
+        keyboard.addKey(KeyEvent.VK_P, InputBase.DETECT_INITIAL_PRESS_ONLY);
         
         //Create all variables methods
         someMethods = new SomeMethods();

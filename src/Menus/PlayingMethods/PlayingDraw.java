@@ -1,10 +1,15 @@
 
 package Menus.PlayingMethods;
 
+//Jplay imports
+import jplay.GameImage;
+
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
+import static Main.Main.coinThread;
 import static Main.Main.enemy;
 import static Main.Main.floor;
+import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
@@ -21,9 +26,14 @@ import javax.swing.JOptionPane;
  */
 public class PlayingDraw extends Thread {
     
+    private final GameImage PAUSE = new GameImage("Images/Playing/Others/Pause.png");
+    
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
+        
+        PAUSE.width = window.getWidth();
+        PAUSE.height = window.getHeight();
         
         int line; //Its is used in 'for'.
         while (playing.GetIsPlaying()) {
@@ -53,12 +63,28 @@ public class PlayingDraw extends Thread {
                 }
             }
             
+            for (line = 0; line < coinThread.length; line ++) {
+                if (coinThread[line] != null) {
+                    coinThread[line].DrawCoin();
+                }
+            }
+            
+            for (line = 0; line < kunaiThead.length; line ++) {
+                if (kunaiThead[line] != null) {
+                    kunaiThead[line].DrawKunai();
+                }
+            }
+            
             playing.DrawHUD();
             
             someMethods.DrawNumbersOnMiddle(ninja.coin, playing.GetCoinHUD(), 16.5f, 0);
             someMethods.DrawNumbersOnMiddle(ninja.enemy, playing.GetEnemyHUD(), 16.5f, 0);
             someMethods.DrawNumbersOnMiddle(ninja.kunai, playing.GetKunaiHUD(), 16.5f, 0);
             someMethods.DrawNumbersOnMiddle(ninja.meters, playing.GetMetersHUD(), 16.5f, 0);
+            
+            if (playing.isPaused) {
+                PAUSE.draw();
+            }
             
             window.update();
             

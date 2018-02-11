@@ -5,7 +5,9 @@ package Menus;
 import jplay.GameImage;
 
 //Classe imports
+import Characters.CoinThread;
 import Characters.Enemy;
+import Characters.KunaiThead;
 import Characters.Ninja;
 import Menus.PlayingMethods.PlayingDraw;
 import Menus.PlayingMethods.PlayingUpdate;
@@ -16,8 +18,10 @@ import Plataform.Water;
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
 import static Main.DeltaTime.deltaTime;
+import static Main.Main.coinThread;
 import static Main.Main.enemy;
 import static Main.Main.floor;
+import static Main.Main.kunaiThead;
 import static Main.Main.keyboard;
 import static Main.Main.ninja;
 import static Main.Main.someMethods;
@@ -38,6 +42,7 @@ public class Playing {
     
     //Java variables
     public boolean allThreadsOk; //Some threads need wait all threads be create to do not have 'NullPointerException'
+    public boolean isPaused;
     public boolean isPlaying;
     public boolean enemyOk;
     public boolean floorOk;
@@ -96,32 +101,38 @@ public class Playing {
         //Game loop
         while (isPlaying) {
             
-            if (speed < 150) {
-                if (timeNextSpeed > TIME_NEXT_SPEED) {
-                    speed ++;
-                    timeNextSpeed = 0;
+            if (!isPaused) {
+                if (speed < 150) {
+                    if (timeNextSpeed > TIME_NEXT_SPEED) {
+                        speed ++;
+                        timeNextSpeed = 0;
+                    }
+                    timeNextSpeed++;
                 }
-                timeNextSpeed++;
-            }
-            
-            //Move the background
-            subSpeed = 1;
-            for (line = 0; line < background.length; line ++) {
-                background[line].x -= (speed * deltaTime) * subSpeed;
-                subSpeed += 0.3;
-            }
-            
-            //Reposition the background  after it exit the windows
-            for (line = 0; line < background.length; line ++) {
-                if (background[line].x + (background[line].width / 2) < 1) {
-                    background[line].x += (background[line].width / 2);
+
+                //Move the background
+                subSpeed = 1;
+                for (line = 0; line < background.length; line ++) {
+                    background[line].x -= (speed * deltaTime) * subSpeed;
+                    subSpeed += 0.3;
+                }
+
+                //Reposition the background  after it exit the windows
+                for (line = 0; line < background.length; line ++) {
+                    if (background[line].x + (background[line].width / 2) < 1) {
+                        background[line].x += (background[line].width / 2);
+                    }
                 }
             }
             
+            if (keyboard.keyDown(KeyEvent.VK_P)) {
+                isPaused = !isPaused;
+            }
             //Exit the game
-            if (keyboard.keyDown(KeyEvent.VK_ESCAPE)) {
+            else if (keyboard.keyDown(KeyEvent.VK_ESCAPE)) {
                 isPlaying = false;
             }
+            
             
             //This sleep is equals for all threads
             try {
@@ -137,6 +148,8 @@ public class Playing {
     /*----  Classe methods  ----*/
     @SuppressWarnings("SleepWhileInLoop")
     public void InitializeThreads() {
+        isPaused = false;
+        
         allThreadsOk = false;
         enemyOk = false;
         floorOk = false;
@@ -144,7 +157,9 @@ public class Playing {
         playingWindowOk = false;
         waterOk = false;
         
+        coinThread = new CoinThread[20];
         enemy = new Enemy[20];
+        kunaiThead = new KunaiThead[20];
         
         floor = new Floor();
         floor.start();

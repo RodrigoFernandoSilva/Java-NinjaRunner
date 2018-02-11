@@ -10,6 +10,8 @@ import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.floor;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -58,7 +60,7 @@ public class Ninja extends Characters {
         
         coin = 0;
         enemy = 0;
-        kunai = 6000;
+        kunai = 6;
         meters = 0;
         
         soul = new Sprite(FILE_WAY + "soul.png");
@@ -118,6 +120,8 @@ public class Ninja extends Characters {
         
         while (playing.GetIsPlaying()) {
             
+            someMethods.PauseTheGame();
+            
             if (temp > (150 - playing.GetSpeed() * 0.96)) {
                 meters++;
                 temp = 0;
@@ -125,7 +129,7 @@ public class Ninja extends Characters {
             temp ++;
             
             //Makes the ninja fall faster or slower in some cases
-            if (!ninjaKeyboard.keyUpIsDown && (ninjaKeyboard.isJumping || ninjaKeyboard.isJumpAttack || ninjaKeyboard.isJumpThrow)) { //Faster
+            if (!ninjaKeyboard.keyUpIsDown && !onFloor && !ninjaKeyboard.isGliding) { //Faster
                 jumpForce = 4;
             } else if (ninjaKeyboard.isGliding && ninjaKeyboard.keySpaceIsDown) { //Slower
                 jumpForce = 0.4;

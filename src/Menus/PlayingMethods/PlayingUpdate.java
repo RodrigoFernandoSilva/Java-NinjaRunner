@@ -3,9 +3,11 @@ package Menus.PlayingMethods;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
+import static Main.Main.coinThread;
 import static Main.Main.enemy;
 import static Main.Main.ninja;
 import static Main.Main.playing;
+import static Main.Main.someMethods;
 
 //Others imports
 import static java.lang.Thread.sleep;
@@ -24,12 +26,20 @@ public class PlayingUpdate extends Thread {
         int line; //It is used in 'for'.
         while (playing.GetIsPlaying()) {
             
+            someMethods.PauseTheGame();
+            
             if (ninja.GetNinjaAnimation().CanUpdateSprite())
                 ninja.UpdateSpriteSheet();
             
             for (line = 0; line < enemy.length; line ++) {
                 if (enemy[line] != null && enemy[line].isOk) {
                     enemy[line].UpdateSpriteSheet();
+                }
+            }
+            
+            for (line = 0; line < coinThread.length; line ++) {
+                if (coinThread[line] != null) {
+                    coinThread[line].UpdadteCoin();
                 }
             }
             
