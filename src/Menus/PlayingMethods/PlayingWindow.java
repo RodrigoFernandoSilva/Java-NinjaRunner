@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 public class PlayingWindow extends Thread {
     
     //Java variables
+    public boolean itOver = false;
     /**
      * Windows height
      */
@@ -84,6 +85,7 @@ public class PlayingWindow extends Thread {
             
             for (line = 0; line < floor.floorLeft.length; line ++) {
                 floor.floorLeft[line].y = camera.y + floor.y[line];
+                floor.floorLeftDark[line].y = floor.floorLeft[line].y;
             }
             
             water.water.y = camera.y + water.y;
@@ -101,6 +103,11 @@ public class PlayingWindow extends Thread {
                 JOptionPane.showMessageDialog(null ,"Maybe the game crash because: " + ex.getMessage());
             }
             
+        }
+        
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
         }
         
     }

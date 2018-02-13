@@ -2,7 +2,6 @@
 package Characters;
 
 //Jplay imports
-import jplay.Animation;
 import jplay.GameImage;
 
 //Variables imports
@@ -27,6 +26,7 @@ public class NinjaKunai extends Thread {
     //Java variables
     private boolean canDraw = false;
     private boolean isAlive = true;
+    public boolean itOver = false;
     private final double SPEED = 250;
     public double y;
     private final String FILE_WAY = "Images/Playing/Ninja/";
@@ -83,6 +83,11 @@ public class NinjaKunai extends Thread {
                 JOptionPane.showMessageDialog(null ,"Maybe the game crash because: " + ex.getMessage());
             }
             
+        }
+        
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
         }
         
     }

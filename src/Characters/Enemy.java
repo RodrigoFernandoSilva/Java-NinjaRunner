@@ -37,6 +37,8 @@ public class Enemy extends Characters {
     @Override
     public void run() {
         
+        itOver = false;
+        
         spriteSheet = new Animation[2];
         spriteSheet[0] = new Animation(FILE_WAY + "Enemy.png", 11);
         spriteSheet[1] = new Animation("Images/Playing/Others/Explosion.png", 12);
@@ -67,7 +69,7 @@ public class Enemy extends Characters {
                 break;
             } else if (spriteSheetEnable == 1 && spriteSheet[spriteSheetEnable].getCurrFrame() >= (spriteSheet[spriteSheetEnable].getFinalFrame() - 1)) {
                 break;
-            } else if (spriteSheetEnable == 0 && ninja.GetNinjaKeyboard().isRunAttack || ninja.GetNinjaKeyboard().isJumpAttack) {
+            } else if (spriteSheetEnable == 0 && (ninja.GetNinjaKeyboard().isRunAttack || ninja.GetNinjaKeyboard().isJumpAttack)) {
                 if (ninja.spriteSheet[ninja.spriteSheetEnable].getCurrFrame() > 8 && spriteSheet[spriteSheetEnable].collided(ninja.spriteSheet[ninja.spriteSheetEnable])) {
                     spriteSheetEnable = 1;
                     x -= spriteSheet[spriteSheetEnable].width / 2;
@@ -88,7 +90,13 @@ public class Enemy extends Characters {
             
         }
         
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
+        }
+        
         floor.SetNullEnemyThread(MY_ID);
+        
         
     }
     

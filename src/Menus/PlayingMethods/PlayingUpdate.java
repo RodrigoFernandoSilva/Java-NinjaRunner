@@ -19,6 +19,9 @@ import javax.swing.JOptionPane;
  */
 public class PlayingUpdate extends Thread {
     
+    //Java variables
+    public boolean itOver = false;
+    
     @Override
     @SuppressWarnings("SleepWhileInLoop")
     public void run() {
@@ -50,6 +53,11 @@ public class PlayingUpdate extends Thread {
                 JOptionPane.showMessageDialog(null ,"Maybe the game crash because: " + ex.getMessage());
             }
             
+        }
+        
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
         }
         
     }

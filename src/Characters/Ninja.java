@@ -10,8 +10,6 @@ import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.floor;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -45,14 +43,16 @@ public class Ninja extends Characters {
     //Classe variables
     private NinjaAnimation ninjaAnimation;
     private NinjaKeyboard ninjaKeyboard;
-    private NinjaKunai[] ninjaKunai;
+    public NinjaKunai[] ninjaKunai;
     
     @Override
+    @SuppressWarnings("SuspiciousIndentAfterControlStatement")
     public void run() {
         
         int slideTime = 0;
         final int SLIDE_TIME = 130;
         
+        itOver = false;
         ninjaAnimationOk = false;
         ninjaKeyboardOk = false;
         
@@ -122,6 +122,17 @@ public class Ninja extends Characters {
             
             someMethods.PauseTheGame();
             
+            for (line = 0; line < Main.Main.enemy.length; line ++) {
+                if ((Main.Main.enemy[line] != null && Main.Main.enemy[line].isOk) &&
+                     Main.Main.enemy[line].spriteSheetEnable == 0 &&
+                     soul.collided(Main.Main.enemy[line].spriteSheet[Main.Main.enemy[line].spriteSheetEnable])) {
+                    playing.isPlaying = false;
+                    break;
+
+                }
+            }
+                
+            
             if (temp > (150 - playing.GetSpeed() * 0.96)) {
                 meters++;
                 temp = 0;
@@ -174,6 +185,10 @@ public class Ninja extends Characters {
             }
             
         }
+        
+        itOver = true;
+        
+        someMethods.WaitSomeThreadOver();
         
     }
     

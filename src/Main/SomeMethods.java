@@ -6,13 +6,21 @@ import jplay.Animation;
 import jplay.GameImage;
 import jplay.Window;
 
+//Classes imports
+import Characters.CoinThread;
+import Characters.Enemy;
+import Characters.NinjaKunai;
+import Characters.KunaiThead;
+
 //Variables impors
+import static Main.Main.coinThread;
+import static Main.Main.enemy;
+import static Main.Main.kunaiThead;
+import static Main.Main.ninja;
 import static Main.Main.playing;
 
 //Others imports
 import static java.lang.Thread.sleep;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,6 +30,7 @@ import javax.swing.JOptionPane;
 public class SomeMethods {
     
     private final Animation NUMBERS = new Animation("Images/Playing/HUD/Numbers/Numbers.png",11);
+    private final Animation NUMBERS_BIG = new Animation("Images/Playing/HUD/Numbers/NumbersBig.png",11);
     
     public void DrawNumbersOnMiddle(int value, GameImage imageBase, double adjustX, double adjustY) {
         String valueStr = String.valueOf(value);
@@ -38,6 +47,24 @@ public class SomeMethods {
             NUMBERS.setCurrFrame((((int) valueStr.charAt(i)) - 48));
             NUMBERS.draw();
             NUMBERS.x += 16;
+        }
+    }
+    
+    public void DrawBigNumbersOnMiddle(int value, GameImage imageBase, double adjustX, double adjustY) {
+        String valueStr = String.valueOf(value);
+        
+        NUMBERS_BIG.x = imageBase.x + (imageBase.width / 2);
+        NUMBERS_BIG.x -= ((31 * valueStr.length()) / 2);
+        NUMBERS_BIG.y = imageBase.y + (imageBase.height / 2);
+        NUMBERS_BIG.y -= NUMBERS_BIG.height /2;
+        
+        NUMBERS_BIG.x += adjustX;
+        NUMBERS_BIG.y += adjustY;
+        
+        for (int i = 0; i < valueStr.length(); i ++) {
+            NUMBERS_BIG.setCurrFrame((((int) valueStr.charAt(i)) - 48));
+            NUMBERS_BIG.draw();
+            NUMBERS_BIG.x += 31;
         }
     }
     
@@ -120,6 +147,63 @@ public class SomeMethods {
      */
     public void PauseTheGame() {
         while (playing.isPaused) {
+            try {
+                sleep(1);
+            } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(null, "Maybe the game crash because: " + ex.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * After the game over, need wait some threads over to do not have 'NullPointerExeption'.
+     */
+    public void WaitSomeThreadOver() {
+        boolean allEnemyOver;
+        boolean allCoinThreadOver;
+        boolean allKunaiThreadOver;
+        boolean allKunai;
+        
+        while (true) {
+            
+            allEnemyOver = true;
+            for (Enemy index : enemy) {
+                if (index != null && !index.itOver) {
+                    allEnemyOver = false;
+                    break;
+                }
+            }
+            
+            allCoinThreadOver = true;
+            for (CoinThread index : coinThread) {
+                if (index != null && !index.itOver) {
+                    allCoinThreadOver = false;
+                    break;
+                }
+            }
+            
+            allKunaiThreadOver = true;
+            for (KunaiThead index : kunaiThead) {
+                if (index != null && !index.itOver) {
+                    allKunaiThreadOver = false;
+                    break;
+                }
+            }
+            
+            allKunai = true;
+            for (NinjaKunai index : ninja.ninjaKunai) {
+                if (index != null && !index.itOver) {
+                    allKunai = false;
+                    break;
+                }
+            }
+            
+            if ((allEnemyOver && allCoinThreadOver && allKunaiThreadOver) &&
+                 playing.GetPlayingDraw().itOver && playing.GetPlayingUpdate().itOver &&
+                 playing.GetPlayingWindow().itOver && ninja.itOver) {
+                break;
+            }
+            
             try {
                 sleep(1);
             } catch (InterruptedException ex) {

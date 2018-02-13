@@ -48,7 +48,9 @@ public class Floor extends Thread {
     private Random generator;
     
     //Jplay variables
+    public GameImage[] floorLeftDark;
     public GameImage[] floorLeft;
+    private GameImage floorRightDark;
     private GameImage floorRight;
     private GameImage object;
     
@@ -58,6 +60,7 @@ public class Floor extends Thread {
         
         generator = new Random();
         
+        floorLeftDark = new Animation[7];
         floorLeft = new Animation[7];
         floorBockNumber = new int[floorLeft.length];
         objectID = new int[floorLeft.length][9];
@@ -65,11 +68,13 @@ public class Floor extends Thread {
         enemyGenerated = new boolean[floorLeft.length];
         
         for (line = 0; line < floorLeft.length; line ++) {
-            floorLeft[line] = new Animation(FILE_WAY + "TiledMapLeft.png");
+            floorLeftDark[line] = new Animation(FILE_WAY + "DarkSky/TiledMapLeft.png");
+            floorLeft[line] = new Animation(FILE_WAY + "Sky/TiledMapLeft.png");
             enemyGenerated[line] = false;
         }
         
-        floorRight = new Animation(FILE_WAY + "TiledMapRight.png");
+        floorRightDark = new Animation(FILE_WAY + "DarkSky/TiledMapRight.png");
+        floorRight = new Animation(FILE_WAY + "Sky/TiledMapRight.png");
         
         firstFloor = 0;
         lastFloor = floorLeft.length - 1;
@@ -89,6 +94,7 @@ public class Floor extends Thread {
             //Move the floor
             for (line = 0; line < floorLeft.length; line ++) {
                 floorLeft[line].x -= (speed) * deltaTime;
+                floorLeftDark[line].x = floorLeft[line].x;
                 //Reposition the floor after it exit the window
                 if (someMethods.ExitWindow(floorLeft[line], floorRight.width * 3)) {
                     RepositionFloor(line);
@@ -175,7 +181,7 @@ public class Floor extends Thread {
                 floorLeft[line].x = floorLeft[line - 1].x + floorLeft[line - 1].width + (floorRight.width * 2);
                 floorLeft[line].x += (generator.nextInt(5) * floorRight.width); //Distance between the floors
                 floorLeft[line].width = (generator.nextInt(20) + 1) * floorRight.width;
-                //floorLeft[line].width = (19) * floorRight.width;
+                floorLeft[line].width = (9) * floorRight.width;
             } else {
                 floorBockNumber[line] = generator.nextInt(2) + 1;
                 //floorBockNumber[line] = 7;
@@ -188,6 +194,9 @@ public class Floor extends Thread {
             
             y[line] = floorLeft[line].height - 128;
             y[line] -= (floorBockNumber[line] * 64);
+            
+            floorLeftDark[line].x = floorLeft[line].x;
+            floorLeftDark[line].width = floorLeft[line].width;
             
         }
     }
@@ -257,79 +266,83 @@ public class Floor extends Thread {
     
     private void GenerateSonsPositionX(int floorIndex) {
         int numberOfBLocks = (int) (Math.round(floorLeft[floorIndex].width / floorRight.width));
+        double[] objectX = new double[enemy.length];
+        int objectLine = 0;
         
         if (numberOfBLocks > 2) {
             if (numberOfBLocks <= 4) {
-                InitializeObjects(floorIndex, floorLeft[floorIndex].width - 15, y[floorIndex]);
+                objectX[objectLine] = floorLeft[floorIndex].width - 15;
+                
             } else if (numberOfBLocks == 5) {
-                InitializeObjects(floorIndex, floorLeft[floorIndex].width - 15 - (generator.nextInt(100)), y[floorIndex]);
+                objectX[objectLine] = floorLeft[floorIndex].width - 15 - (generator.nextInt(100));
+                
             } else if (numberOfBLocks <= 7) {
-                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeObjects(floorIndex, x, y[floorIndex]);
+                objectX[objectLine] = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
                 if (generator.nextInt(10) <= 4) {
-                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
-                        x -= 118;
+                    objectLine++;
+                    if (objectX[objectLine - 1] + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        objectX[objectLine] = objectX[objectLine - 1] - 118;
                     } else {
-                        x += 118;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
+                
             } else if (numberOfBLocks <= 12) {
-                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeObjects(floorIndex, x, y[floorIndex]);
+                objectX[objectLine] = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
                 if (generator.nextInt(10) <= 6) {
-                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
-                        x -= 118;
+                    objectLine++;
+                    if (objectX[objectLine - 1] + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        objectX[objectLine] = objectX[objectLine - 1] - 118;
                     } else {
-                        x += 118;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
+                
             } else if (numberOfBLocks <= 17) {
-                double x = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
-                InitializeObjects(floorIndex, x, y[floorIndex]);
+                objectX[objectLine] = 182f + generator.nextInt(floorLeft[floorIndex].width - 182) - 15f;
                 if (generator.nextInt(10) <= 8) {
-                    if (x + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
-                        x -= 118;
+                    objectLine++;
+                    if (objectX[objectLine - 1] + 118 + 84 > floorLeft[floorIndex].width + floorRight.width) {
+                        objectX[objectLine] = objectX[objectLine - 1] - 118;
                     } else {
-                        x += 118;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
                 }
+                
             } else if (numberOfBLocks > 17) {
                 boolean startOrEnd = generator.nextBoolean();
                 
                 if (startOrEnd) {
-                    double x = 182f + generator.nextInt(182);
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
+                    objectX[objectLine] = 182f + generator.nextInt(182);
                     if (generator.nextBoolean()) { 
-                        x += 118;
-                        InitializeObjects(floorIndex, x, y[floorIndex]);
+                        objectLine ++;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
                 } else if (!startOrEnd) {
-                    double x = (floorLeft[floorIndex].width - 182) - 15f;
-                    x -= generator.nextInt(182);
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
+                    objectX[objectLine] = (floorLeft[floorIndex].width - 182) - 15f;
+                    objectX[objectLine] -= generator.nextInt(182);
                     if (generator.nextBoolean()) { 
-                        x += 118;   
-                        InitializeObjects(floorIndex, x, y[floorIndex]);
+                        objectLine++;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
                 }
                 
                 //Enemy on the middle
                 if (generator.nextBoolean()) { 
-                    double x = ((floorLeft[floorIndex].width / 2));
-                    InitializeObjects(floorIndex, x, y[floorIndex]);
+                    objectLine++;
+                    objectX[objectLine] = ((floorLeft[floorIndex].width / 2));
                     if (generator.nextBoolean()) { 
-                        x += 118;   
-                        InitializeObjects(floorIndex, x, y[floorIndex]);
+                        objectLine ++;
+                        objectX[objectLine] = objectX[objectLine - 1] + 118;
                     }
                 }
             }
         }
+        
+        InitializeObjects(floorIndex, objectX, y[floorIndex], objectLine);
     }
     
-    public void InitializeObjects(int father, double x, double y) {
+    public void InitializeObjects(int father, double[] x, double y, int lenght) {
         @SuppressWarnings("UnusedAssignment")
         String whatIs = null;
         
@@ -341,32 +354,34 @@ public class Floor extends Thread {
             whatIs = "Kunai";
         }
         
-        if ("Enemy".equalsIgnoreCase(whatIs)) {
-            for (int i0 = 0; i0 < enemy.length; i0++) {
-                if (enemy[i0] == null) {
-                    enemy[i0] = new Enemy(father, x, y, i0);
-                    enemy[i0].start();
-                    break;
+        for (int i1 = 0; i1 < lenght; i1++) {
+            if ("Enemy".equalsIgnoreCase(whatIs)) {
+                for (int i0 = 0; i0 < enemy.length; i0++) {
+                    if (enemy[i0] == null) {
+                        enemy[i0] = new Enemy(father, x[i1], y, i0);
+                        enemy[i0].start();
+                        break;
+                    }
                 }
-            }
-        } else if ("Coin".equalsIgnoreCase(whatIs)) {
-            for (int i0 = 0; i0 < coinThread.length; i0++) {
-                if (coinThread[i0] == null) {
-                    coinThread[i0] = new CoinThread(father, x, y, i0);
-                    coinThread[i0].start();
-                    break;
+            } else if ("Coin".equalsIgnoreCase(whatIs)) {
+                for (int i0 = 0; i0 < coinThread.length; i0++) {
+                    if (coinThread[i0] == null) {
+                        coinThread[i0] = new CoinThread(father, x[i1], y, i0);
+                        coinThread[i0].start();
+                        break;
+                    }
                 }
-            }
-        } else if ("Kunai".equalsIgnoreCase(whatIs)) {
-            for (int i0 = 0; i0 < kunaiThead.length; i0++) {
-                if (kunaiThead[i0] == null) {
-                    kunaiThead[i0] = new KunaiThead(father, x, y, i0);
-                    kunaiThead[i0].start();
-                    break;
+            } else if ("Kunai".equalsIgnoreCase(whatIs)) {
+                for (int i0 = 0; i0 < kunaiThead.length; i0++) {
+                    if (kunaiThead[i0] == null) {
+                        kunaiThead[i0] = new KunaiThead(father, x[i1], y, i0);
+                        kunaiThead[i0].start();
+                        break;
+                    }
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "Programing erro, " + whatIs + " does not exist!!!");
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Programing erro, " + whatIs + " does not exist!!!");
         }
     }
     
@@ -375,28 +390,52 @@ public class Floor extends Thread {
     }
     
     public void DrawLeftFloor() {
-        for (GameImage index : floorLeft) {
-            if (someMethods.IsOnScene(index, window)) {
-                index.draw();
+        if (playing.day) {
+            for (GameImage index : floorLeft) {
+                if (someMethods.IsOnScene(index, window)) {
+                    index.draw();
+                }
+            }
+        } else {
+            for (GameImage index : floorLeftDark) {
+                if (someMethods.IsOnScene(index, window)) {
+                    index.draw();
+                }
             }
         }
     }
     
     public void DrawRightFloor() {
-        for (GameImage index : floorLeft) {
-            floorRight.x = index.x + index.width;
-            floorRight.y =  index.y;
-            if (someMethods.IsOnScene(floorRight, window)) {
-                floorRight.draw();
+        if (playing.day) {
+            for (GameImage index : floorLeft) {
+                floorRight.x = index.x + index.width;
+                floorRight.y =  index.y;
+                if (someMethods.IsOnScene(floorRight, window)) {
+                    floorRight.draw();
+                }
+            }
+        } else {
+            for (GameImage index : floorLeft) {
+                floorRightDark.x = index.x + index.width;
+                floorRightDark.y =  index.y;
+                if (someMethods.IsOnScene(floorRightDark, window)) {
+                    floorRightDark.draw();
+                }
             }
         }
     }
     
     public void DrawObjects() {
+        String skyFIle = "Sky/Object/";
+        
+        if (!playing.day) {
+            skyFIle = "DarkSky/Object/";
+        }
+        
         for (int i = 0; i < floorLeft.length; i ++) {
             for (int column = 0; column < objectID[i][0]; column ++) {
                 if (objectID[i][column + 2] != 0) {
-                    object = new GameImage(FILE_WAY  + "Object/" + String.valueOf(objectID[i][1]) +
+                    object = new GameImage(FILE_WAY  + skyFIle + String.valueOf(objectID[i][1]) +
                             "Blocks" + String.valueOf(objectID[i][column + 2]) + ".png");
                     if (someMethods.IsOnScene(object, window)) {
                         object.x = someMethods.PutImageOnMiddle(object, floorLeft[i], floorRight.width, objectID[i][0], (column));

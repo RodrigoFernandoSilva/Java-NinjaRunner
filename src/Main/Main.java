@@ -119,15 +119,17 @@ public class Main {
         ImageIcon imageIcon = new ImageIcon("Images/Icon/Icon.png");
         window.setIconImage(imageIcon.getImage());
         
+        boolean playAgain = true;
         while (isRunning) {
             
-            //menu.Menu();
+            if (!playAgain) {
+                menu.Menu();
+            }
             
             playing.InitializeVariables();
             playing.InitializeThreads();
             playing.Playing();
-            
-            isRunning = false;
+            playAgain = playing.PlayAgain();
             
         }
         

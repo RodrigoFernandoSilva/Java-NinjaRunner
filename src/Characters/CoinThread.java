@@ -24,6 +24,7 @@ public class CoinThread extends Thread {
     
     //Java variables
     public boolean isOk = false;
+    public boolean itOver = false;
     public int fahter;
     private final int MY_ID;
     private int timeUpdate = 0;
@@ -72,7 +73,13 @@ public class CoinThread extends Thread {
             }
             
         }
+        
         isOk = false;
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
+        }
+        
         floor.SetNullCoinThread(MY_ID);
         
     }

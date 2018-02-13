@@ -26,6 +26,10 @@ import javax.swing.JOptionPane;
  */
 public class PlayingDraw extends Thread {
     
+    //Java variables
+    public boolean itOver = false;
+    
+    //Jplay variables
     private final GameImage PAUSE = new GameImage("Images/Playing/Others/Pause.png");
     
     @Override
@@ -35,7 +39,7 @@ public class PlayingDraw extends Thread {
         PAUSE.width = window.getWidth();
         PAUSE.height = window.getHeight();
         
-        int line; //Its is used in 'for'.
+        int line; //It is used in 'for'.
         while (playing.GetIsPlaying()) {
             
             playing.DrawBackground();
@@ -43,6 +47,18 @@ public class PlayingDraw extends Thread {
             water.DrawWater();
             
             floor.DrawObjects();
+            
+            for (line = 0; line < coinThread.length; line ++) {
+                if (coinThread[line] != null) {
+                    coinThread[line].DrawCoin();
+                }
+            }
+            
+            for (line = 0; line < kunaiThead.length; line ++) {
+                if (kunaiThead[line] != null) {
+                    kunaiThead[line].DrawKunai();
+                }
+            }
             
             ninja.DrawKunai();
             
@@ -60,18 +76,6 @@ public class PlayingDraw extends Thread {
             for (line = 0; line < enemy.length; line ++) {
                 if (enemy[line] != null && enemy[line].isOk && enemy[line].wasPutOnPosition) {
                     enemy[line].DrawSpriteSheet();
-                }
-            }
-            
-            for (line = 0; line < coinThread.length; line ++) {
-                if (coinThread[line] != null) {
-                    coinThread[line].DrawCoin();
-                }
-            }
-            
-            for (line = 0; line < kunaiThead.length; line ++) {
-                if (kunaiThead[line] != null) {
-                    kunaiThead[line].DrawKunai();
                 }
             }
             
@@ -95,6 +99,11 @@ public class PlayingDraw extends Thread {
                 JOptionPane.showMessageDialog(null ,"Maybe the game crash because: " + ex.getMessage());
             }
             
+        }
+        
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
         }
         
     }

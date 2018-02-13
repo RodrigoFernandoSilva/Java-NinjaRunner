@@ -24,10 +24,9 @@ public class KunaiThead extends Thread {
     
     //Java variables
     public boolean isOk = false;
+    public boolean itOver = false;
     public int fahter;
     private final int MY_ID;
-    private int timeUpdate = 0;
-    private int timeUpdateFinal = 100;
     public double x;
     public double y;
     private final String FILE_WAY = "Images/Playing/Ninja/";
@@ -44,8 +43,6 @@ public class KunaiThead extends Thread {
     
     @Override
     public void run() {
-        
-        timeUpdateFinal = CreatUpdateTime();
         
         y -= COIN.height + 18;
         
@@ -71,17 +68,16 @@ public class KunaiThead extends Thread {
             
         }
         
+        itOver = true;
+        if (!playing.GetIsPlaying()) {
+            someMethods.WaitSomeThreadOver();
+        }
+        
         floor.SetNullKunaiThread(MY_ID);
         
     }
     
     /*----  Classe methods  ----*/
-    private int CreatUpdateTime() {
-        Random generator = new Random();
-        
-        return generator.nextInt(50) + 50;
-    }
-    
     public void DrawKunai() {
         COIN.draw();
     }

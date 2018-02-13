@@ -16,6 +16,7 @@ import static Main.Main.window;
 public class Characters extends Thread {
     
     //Java variables
+    public boolean itOver;
     public int spriteSheetEnable; //It for known which sprite sheet is going to be draw and update
     public int animationSpeed;
     public double[][] spriteAdjustX;
