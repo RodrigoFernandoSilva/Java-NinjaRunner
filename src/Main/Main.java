@@ -68,7 +68,7 @@ public class Main {
         shortButton.y = longButton.y;
         shortButton.x = 183;
         
-        /*
+        
         while (true) {
             
             ChoseResolution.draw();
@@ -91,12 +91,11 @@ public class Main {
             if (keyboard.keyDown(Keyboard.ESCAPE_KEY)) {
                 window.exit();
             }
-        }*/
-        window.setSize(800, 600);
+        }
         
         playing = new Playing();
         
-        //window.setFullScreen();
+        window.setFullScreen();
         
         //Add the keys that is going to be used on game
         keyboard.addKey(KeyEvent.VK_ESCAPE, InputBase.DETECT_INITIAL_PRESS_ONLY);
@@ -119,7 +118,7 @@ public class Main {
         ImageIcon imageIcon = new ImageIcon("Images/Icon/Icon.png");
         window.setIconImage(imageIcon.getImage());
         
-        boolean playAgain = true;
+        boolean playAgain = false;
         while (isRunning) {
             
             if (!playAgain) {
