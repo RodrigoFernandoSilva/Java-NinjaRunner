@@ -3,6 +3,7 @@ package Characters;
 
 //Jplay imports
 import jplay.Animation;
+import jplay.Sound;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
@@ -20,12 +21,17 @@ import javax.swing.JOptionPane;
  */
 public class Enemy extends Characters {
     
+    //Java variables
     private final int ANIMATION_SPEED = 900;
     private int father = -1;
     private final int MY_ID;
     public boolean isOk = false;
     public boolean wasPutOnPosition = false;
     private final String FILE_WAY = "Images/Playing/Enemy/";
+    private final String SOUND_FILE = "Sounds/Others/Impact.wav";
+    
+    //Jplay variables
+    Sound impactSound;
     
     public Enemy(int father, double x, double y, int myId) {
         this.father = father;
@@ -69,11 +75,14 @@ public class Enemy extends Characters {
                 break;
             } else if (spriteSheetEnable == 1 && spriteSheet[spriteSheetEnable].getCurrFrame() >= (spriteSheet[spriteSheetEnable].getFinalFrame() - 1)) {
                 break;
+            //Collided with the kunai
             } else if (spriteSheetEnable == 0 && (ninja.GetNinjaKeyboard().isRunAttack || ninja.GetNinjaKeyboard().isJumpAttack)) {
                 if (ninja.spriteSheet[ninja.spriteSheetEnable].getCurrFrame() > 8 && spriteSheet[spriteSheetEnable].collided(ninja.spriteSheet[ninja.spriteSheetEnable])) {
                     spriteSheetEnable = 1;
                     x -= spriteSheet[spriteSheetEnable].width / 2;
                     wasPutOnPosition = false;
+                    impactSound = new Sound(SOUND_FILE);
+                    impactSound.play();
                 }
             }
             

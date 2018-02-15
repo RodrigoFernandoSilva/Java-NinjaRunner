@@ -3,6 +3,7 @@ package Characters;
 
 //Jplay imports
 import jplay.Animation;
+import jplay.Sound;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
@@ -32,9 +33,11 @@ public class CoinThread extends Thread {
     public double x;
     public double y;
     private final String FILE_WAY = "Images/Playing/Ninja/";
+    private final String SOUND_FILE = "Sounds/Ninja/star.wav";
     
-    //Kplay variables
+    //Jplay variables
     public final Animation COIN = new Animation(FILE_WAY + "Coin.png", 11);
+    public Sound coinSound;
     
     public CoinThread(int father, double x , double y, int myId) {
         this.fahter = father;
@@ -62,6 +65,8 @@ public class CoinThread extends Thread {
             
             if (COIN.collided(ninja.soul)) {
                 ninja.coin++;
+                coinSound = new Sound(SOUND_FILE);
+                coinSound.play();
                 break;
             }
             

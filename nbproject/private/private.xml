@@ -3,17 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/PlayingMethods/PlayingDraw.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/Characters.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/NinjaKunai.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/Playing.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/KunaiThead.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/CoinThread.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/PlayingMethods/PlayingWindow.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Plataform/Floor.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Main/SomeMethods.java</file>
-            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/PlayingMethods/PlayingUpdate.java</file>
+            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/NinjaKeyboard.java</file>
+            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/Playing.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Main/Main.java</file>
+            <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Menus/Menu.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/Ninja.java</file>
             <file>file:/C:/4.0%20MyProjects/LearnAll/2.0%20Runner/3.0%20Java%20(Jplay-NetBeans)/Java-NinjaRunner/src/Characters/Enemy.java</file>
         </group>

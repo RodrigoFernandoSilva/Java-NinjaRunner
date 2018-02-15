@@ -11,6 +11,7 @@ import Characters.CoinThread;
 import Characters.Enemy;
 import Characters.NinjaKunai;
 import Characters.KunaiThead;
+import Characters.TiledMapToSlide;
 
 //Variables impors
 import static Main.Main.coinThread;
@@ -18,6 +19,7 @@ import static Main.Main.enemy;
 import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
+import static Main.Main.tiledMapToSlide;
 
 //Others imports
 import static java.lang.Thread.sleep;
@@ -163,6 +165,7 @@ public class SomeMethods {
         boolean allCoinThreadOver;
         boolean allKunaiThreadOver;
         boolean allKunai;
+        boolean allTiledMapToSlideOver;
         
         while (true) {
             
@@ -198,7 +201,15 @@ public class SomeMethods {
                 }
             }
             
-            if ((allEnemyOver && allCoinThreadOver && allKunaiThreadOver) &&
+            allTiledMapToSlideOver = true;
+            for (TiledMapToSlide index : tiledMapToSlide) {
+                if (index != null && !index.itOver) {
+                    allTiledMapToSlideOver = false;
+                    break;
+                }
+            }
+            
+            if ((allEnemyOver && allCoinThreadOver && allKunaiThreadOver) && allTiledMapToSlideOver &&
                  playing.GetPlayingDraw().itOver && playing.GetPlayingUpdate().itOver &&
                  playing.GetPlayingWindow().itOver && ninja.itOver) {
                 break;

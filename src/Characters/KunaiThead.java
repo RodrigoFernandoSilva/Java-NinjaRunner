@@ -3,6 +3,7 @@ package Characters;
 
 //Jplay imports
 import jplay.GameImage;
+import jplay.Sound;
 
 //Variables imports
 import static Main.DeltaTime.allThreadSleep;
@@ -13,7 +14,6 @@ import static Main.Main.someMethods;
 
 //Others imports
 import static java.lang.Thread.sleep;
-import java.util.Random;
 import javax.swing.JOptionPane;
 
 /**
@@ -30,9 +30,11 @@ public class KunaiThead extends Thread {
     public double x;
     public double y;
     private final String FILE_WAY = "Images/Playing/Ninja/";
+    private final String SOUND_FILE = "Sounds/Ninja/Kunai_Take.wav";
     
-    //Kplay variables
+    //Jplay variables
     public final GameImage COIN = new GameImage(FILE_WAY + "KunaiTake.png");
+    private Sound kunaiSound;
     
     public KunaiThead(int father, double x , double y, int myId) {
         this.fahter = father;
@@ -56,6 +58,8 @@ public class KunaiThead extends Thread {
             
             if (COIN.collided(ninja.soul)) {
                 ninja.kunai++;
+                kunaiSound = new Sound(SOUND_FILE);
+                kunaiSound.play();
                 break;
             }
             

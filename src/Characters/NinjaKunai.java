@@ -12,6 +12,7 @@ import static Main.Main.floor;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import static Main.Main.tiledMapToSlide;
 import static Main.Main.window;
 
 //Others imports
@@ -65,6 +66,14 @@ public class NinjaKunai extends Thread {
                     enemy[line].wasPutOnPosition = false;
                     isAlive = false;
                     ninja.enemy++;
+                    break;
+                }
+            }
+            
+            for (line = 0; line < tiledMapToSlide.length; line++) {
+                if ((tiledMapToSlide[line] != null && tiledMapToSlide[line].isOk && kunai.collided(tiledMapToSlide[line].GetFloorSky()) &&
+                    kunai.x > tiledMapToSlide[line].GetFloorSky().x)) {
+                    isAlive = false;
                     break;
                 }
             }

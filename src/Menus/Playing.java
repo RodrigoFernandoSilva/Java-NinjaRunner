@@ -3,6 +3,7 @@ package Menus;
 
 //Jplay imports
 import jplay.Animation;
+import jplay.Sound;
 import jplay.GameImage;
 import jplay.Keyboard;
 
@@ -11,7 +12,8 @@ import Characters.CoinThread;
 import Characters.Enemy;
 import Characters.KunaiThead;
 import Characters.Ninja;
-import Main.Sky;;
+import Characters.TiledMapToSlide;
+import Main.Sky;
 import Menus.PlayingMethods.PlayingDraw;
 import Menus.PlayingMethods.PlayingUpdate;
 import Menus.PlayingMethods.PlayingWindow;
@@ -29,6 +31,7 @@ import static Main.Main.keyboard;
 import static Main.Main.ninja;
 import static Main.Main.mouse;
 import static Main.Main.someMethods;
+import static Main.Main.tiledMapToSlide;
 import static Main.Main.water;
 import static Main.Main.window;
 
@@ -55,10 +58,11 @@ public class Playing {
     public boolean playingWindowOk;
     public boolean skyOk;
     public boolean waterOk;
-    private double speed = 50; //50
+    private double speed;
     private double subSpeedMax;
-    private int timeNextSpeed = 0;
+    private int timeNextSpeed ;
     private final int TIME_NEXT_SPEED = 50;
+    private final String BUTTON_FILE = "Sounds/Others/Button.wav";
     private final String FILE_WAY = "Images/Playing/"; //These variables is going to be used to initialize others variables
     /**
      * It is used in 'for'.
@@ -81,6 +85,9 @@ public class Playing {
     
     @SuppressWarnings("SleepWhileInLoop")
     public void Playing() {
+        
+        speed = 50;
+        timeNextSpeed = 0;
         
         day = true;
         
@@ -149,10 +156,10 @@ public class Playing {
             if (keyboard.keyDown(KeyEvent.VK_P)) {
                 isPaused = !isPaused;
             }
-            //Exit the game
+            /*Exit the game
             else if (keyboard.keyDown(KeyEvent.VK_ESCAPE)) {
                 isPlaying = false;
-            }
+            }*/
             
             
             //This sleep is equals for all threads
@@ -184,6 +191,7 @@ public class Playing {
         coinThread = new CoinThread[20];
         enemy = new Enemy[20];
         kunaiThead = new KunaiThead[20];
+        tiledMapToSlide = new TiledMapToSlide[20];
         
         floor = new Floor();
         floor.start();
@@ -223,6 +231,12 @@ public class Playing {
     }
     
     public void InitializeVariables() {
+        GameImage loading = new GameImage(FILE_WAY + "Others/Carregando.png");
+        loading.x = (window.getWidth() - loading.width) / 2;
+        loading.y = (window.getHeight()- loading.height) / 2;
+        loading.draw();
+        window.update();
+        
         isPlaying = true;
         
         backgroundSky = new Animation[4];
@@ -327,6 +341,7 @@ public class Playing {
      * @return 
      */
     public boolean PlayAgain() {
+        Sound buttonSound;
         GameImage gameOver = new GameImage(FILE_WAY + "GameOVer/GameOver.png");
         GameImage menu = new GameImage(FILE_WAY + "GameOVer/Menu.png");
         GameImage restart = new GameImage(FILE_WAY + "GameOVer/Restart.png");
@@ -358,8 +373,12 @@ public class Playing {
             
             if (mouse.isLeftButtonPressed()) {
                 if (mouse.isOverObject(menu)) {
+                    buttonSound = new Sound(BUTTON_FILE);
+                    buttonSound.play();
                     return false;
                 } else if (mouse.isOverObject(restart)) {
+                    buttonSound = new Sound(BUTTON_FILE);
+                    buttonSound.play();
                     return true;
                 }
             }

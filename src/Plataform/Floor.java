@@ -15,11 +15,13 @@ import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import static Main.Main.tiledMapToSlide;
 import static Main.Main.window;
 
 //Classes imports
 import Characters.Enemy;
 import Characters.KunaiThead;
+import Characters.TiledMapToSlide;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -51,7 +53,7 @@ public class Floor extends Thread {
     public GameImage[] floorLeftDark;
     public GameImage[] floorLeft;
     private GameImage floorRightDark;
-    private GameImage floorRight;
+    public GameImage floorRight;
     private GameImage object;
     
     @Override
@@ -102,7 +104,7 @@ public class Floor extends Thread {
                 
                 if (!enemyGenerated[line] && floorLeft[line].x < window.getWidth()) {
                     enemyGenerated[line] = true;
-                    GenerateFloorSons(line);
+                    GenerateSonsPositionX(line);
                 }
             }
             
@@ -177,16 +179,12 @@ public class Floor extends Thread {
             
             if (line != 0) {
                 floorBockNumber[line] = GenerateFloorBockNumber(line);
-                //floorBockNumber[line] = 5;
                 floorLeft[line].x = floorLeft[line - 1].x + floorLeft[line - 1].width + (floorRight.width * 2);
                 floorLeft[line].x += (generator.nextInt(5) * floorRight.width); //Distance between the floors
                 floorLeft[line].width = (generator.nextInt(20) + 1) * floorRight.width;
-                floorLeft[line].width = (9) * floorRight.width;
             } else {
                 floorBockNumber[line] = generator.nextInt(2) + 1;
-                //floorBockNumber[line] = 7;
                 floorLeft[line].width = (generator.nextInt(6) + 6) * floorRight.width;
-                floorLeft[line].width = 400;
                 enemyGenerated[line] = true;
             }
             
@@ -250,26 +248,33 @@ public class Floor extends Thread {
     }
     
     /**
-     * Generates the son that is going to be over the floor. They can be the enemy,
-     * kunai or a coin.
+     * Generates the son that is going to be over the floor. They can be the enemy, block to
+     * slide, kunai or a coin.
      * 
      * @param index 
      */
-    private void GenerateFloorSons(int index) {
-        for (Enemy enemy1 : enemy) {
-            if (enemy[line] == null) {
-                GenerateSonsPositionX(index);
-                break;
-            }
-        }
-    }
-    
     private void GenerateSonsPositionX(int floorIndex) {
-        int numberOfBLocks = (int) (Math.round(floorLeft[floorIndex].width / floorRight.width));
+        boolean isSlide = false;
         double[] objectX = new double[enemy.length];
+        int numberOfBLocks = (int) (Math.round(floorLeft[floorIndex].width / floorRight.width));
         int objectLine = 0;
         
-        if (numberOfBLocks > 2) {
+        if (numberOfBLocks > 9 && generator.nextBoolean()) {
+            isSlide = true;
+            if (numberOfBLocks < 18) {
+                objectX[objectLine] = (floorLeft[floorIndex].width / 2) + (generator.nextInt(64));
+                
+            } else {
+                objectX[objectLine] = (floorLeft[floorIndex].width / 2) - (generator.nextInt(128) - 64);
+                
+                if (generator.nextInt(10) < 7) {
+                    objectLine ++;
+                    objectX[objectLine] = (floorLeft[floorIndex].width - 192) - (generator.nextInt(64));
+                }
+                
+            }
+            
+        } else if (numberOfBLocks > 2) {
             if (numberOfBLocks <= 4) {
                 objectX[objectLine] = floorLeft[floorIndex].width - 15;
                 
@@ -339,54 +344,73 @@ public class Floor extends Thread {
             }
         }
         
-        InitializeObjects(floorIndex, objectX, y[floorIndex], objectLine);
+        InitializeObjects(floorIndex, objectX, y[floorIndex], (objectLine + 1), isSlide);
     }
     
-    public void InitializeObjects(int father, double[] x, double y, int lenght) {
-        @SuppressWarnings("UnusedAssignment")
-        String whatIs = null;
+    public void InitializeObjects(int father, double[] x, double y, int lenght, boolean isSlide) {
         
-        if (generator.nextInt(10) < 5) {
-            whatIs = "Enemy";
-        } else if (generator.nextInt(10) < 5) {
-            whatIs = "Coin";
+        
+        if (isSlide) {
+            for (int i1 = 0; i1 < lenght; i1++) {
+                for (int i0 = 0; i0 < tiledMapToSlide.length; i0++) {
+                    if (tiledMapToSlide[i0] == null) {
+                        tiledMapToSlide[i0] = new TiledMapToSlide(father, x[i1], i0);
+                        tiledMapToSlide[i0].start();
+                        
+                        break;
+                    }
+                }
+            }   
         } else {
-            whatIs = "Kunai";
-        }
-        
-        for (int i1 = 0; i1 < lenght; i1++) {
-            if ("Enemy".equalsIgnoreCase(whatIs)) {
-                for (int i0 = 0; i0 < enemy.length; i0++) {
-                    if (enemy[i0] == null) {
-                        enemy[i0] = new Enemy(father, x[i1], y, i0);
-                        enemy[i0].start();
-                        break;
-                    }
-                }
-            } else if ("Coin".equalsIgnoreCase(whatIs)) {
-                for (int i0 = 0; i0 < coinThread.length; i0++) {
-                    if (coinThread[i0] == null) {
-                        coinThread[i0] = new CoinThread(father, x[i1], y, i0);
-                        coinThread[i0].start();
-                        break;
-                    }
-                }
-            } else if ("Kunai".equalsIgnoreCase(whatIs)) {
-                for (int i0 = 0; i0 < kunaiThead.length; i0++) {
-                    if (kunaiThead[i0] == null) {
-                        kunaiThead[i0] = new KunaiThead(father, x[i1], y, i0);
-                        kunaiThead[i0].start();
-                        break;
-                    }
-                }
+            @SuppressWarnings("UnusedAssignment")
+            String whatIs = null;
+
+            if (generator.nextInt(10) < 5) {
+                whatIs = "Enemy";
+            } else if (generator.nextInt(10) < 5) {
+                whatIs = "Coin";
             } else {
-                JOptionPane.showMessageDialog(null, "Programing erro, " + whatIs + " does not exist!!!");
+                whatIs = "Kunai";
+            }
+
+            for (int i1 = 0; i1 < lenght; i1++) {
+                if ("Enemy".equalsIgnoreCase(whatIs)) {
+                    for (int i0 = 0; i0 < enemy.length; i0++) {
+                        if (enemy[i0] == null) {
+                            enemy[i0] = new Enemy(father, x[i1], y, i0);
+                            enemy[i0].start();
+                            break;
+                        }
+                    }
+                } else if ("Coin".equalsIgnoreCase(whatIs)) {
+                    for (int i0 = 0; i0 < coinThread.length; i0++) {
+                        if (coinThread[i0] == null) {
+                            coinThread[i0] = new CoinThread(father, x[i1], y, i0);
+                            coinThread[i0].start();
+                            break;
+                        }
+                    }
+                } else if ("Kunai".equalsIgnoreCase(whatIs)) {
+                    for (int i0 = 0; i0 < kunaiThead.length; i0++) {
+                        if (kunaiThead[i0] == null) {
+                            kunaiThead[i0] = new KunaiThead(father, x[i1], y, i0);
+                            kunaiThead[i0].start();
+                            break;
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Programing erro, " + whatIs + " does not exist!!!");
+                }
             }
         }
     }
     
     public double GetSpeed() {
         return speed;
+    }
+    
+    public int GetFirstFloorId() {
+        return firstFloor;
     }
     
     public void DrawLeftFloor() {
@@ -479,4 +503,7 @@ public class Floor extends Thread {
         kunaiThead[index] = null;
     }
     
+    public void SetNullTiledMapToSlide(int index) {
+        tiledMapToSlide[index] = null;
+    }
 }

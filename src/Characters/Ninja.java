@@ -2,6 +2,7 @@
 package Characters;
 
 //Jplay imports
+import jplay.Sound;
 import jplay.Sprite;
 import jplay.Animation;
 
@@ -10,6 +11,8 @@ import static Main.DeltaTime.allThreadSleep;
 import static Main.Main.floor;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import static Main.Main.tiledMapToSlide;
+import static Main.Main.window;
 
 //Others imports
 import javax.swing.JOptionPane;
@@ -24,7 +27,7 @@ public class Ninja extends Characters {
     private boolean isJumping = false;
     public boolean ninjaAnimationOk;
     public boolean ninjaKeyboardOk;
-    private boolean onFloor = true;
+    public boolean onFloor = true;
     private double ninjaFloor;
     /**
      * It is the additional jump force.
@@ -39,6 +42,7 @@ public class Ninja extends Characters {
     public int enemy;
     public int kunai;
     public int meters;
+    public int slideTime;
     
     //Classe variables
     private NinjaAnimation ninjaAnimation;
@@ -49,8 +53,7 @@ public class Ninja extends Characters {
     @SuppressWarnings("SuspiciousIndentAfterControlStatement")
     public void run() {
         
-        int slideTime = 0;
-        final int SLIDE_TIME = 130;
+        slideTime = 0;
         
         itOver = false;
         ninjaAnimationOk = false;
@@ -122,6 +125,12 @@ public class Ninja extends Characters {
             
             someMethods.PauseTheGame();
             
+            for (TiledMapToSlide index : tiledMapToSlide) {
+                if (!ninjaKeyboard.isSliding && index != null && soul.collided(index.GetFloorSky())) {
+                    playing.isPlaying = false;
+                }
+            }
+            
             for (line = 0; line < Main.Main.enemy.length; line ++) {
                 if ((Main.Main.enemy[line] != null && Main.Main.enemy[line].isOk) &&
                      Main.Main.enemy[line].spriteSheetEnable == 0 &&
@@ -148,10 +157,21 @@ public class Ninja extends Characters {
                 jumpForce = 4;
             }
             
-            //Set the floor to sprite and makes it jump
-            ninjaFloor = floor.GetFirstFloorY();
             jumpApplyForce(jumpForce);
             soul.y = y - soul.height;
+            
+            //Set the floor to sprite and makes it jump
+            if ((soul.x > floor.floorLeft[floor.GetFirstFloorId()].x + floor.floorLeft[floor.GetFirstFloorId()].width +
+                 (floor.floorRight.width / 1.2))) {
+                ninjaFloor = window.getHeight() * 2;
+                
+            //Ninja exit the windows or get in the floor
+            } else if (soul.x + soul.width > floor.floorLeft[floor.GetFirstFloorId()].x) {
+                if (y > floor.y[floor.GetFirstFloorId()]) {
+                    playing.isPlaying = false;
+                }
+                ninjaFloor = floor.GetFirstFloorY();
+            }
             
             if (onFloor && y < ninjaFloor + playing.GetPlayingWindow().camera.y) {
                 velocityY = 0;
@@ -166,7 +186,7 @@ public class Ninja extends Characters {
             
             //This is how long the ninja can slide
             if (ninjaKeyboard.isSliding) {
-                if (slideTime > SLIDE_TIME){
+                if (slideTime > (int) (200 - playing.GetSpeed())){
                     ninjaKeyboard.isSliding = false;
                     ninjaKeyboard.isRunning = true;
                     slideTime = 0;
@@ -227,6 +247,9 @@ public class Ninja extends Characters {
         }
     }
     
+    /**
+     * Reset the jumpForce variables.
+     */
     public void JumpForceReset() {
         jumpForce = 1;
     }

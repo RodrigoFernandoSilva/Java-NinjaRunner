@@ -13,6 +13,7 @@ import static Main.Main.kunaiThead;
 import static Main.Main.ninja;
 import static Main.Main.playing;
 import static Main.Main.someMethods;
+import static Main.Main.tiledMapToSlide;
 import static Main.Main.water;
 import static Main.Main.window;
 
@@ -60,12 +61,18 @@ public class PlayingDraw extends Thread {
                 }
             }
             
+            for (line = 0; line < tiledMapToSlide.length; line ++) {
+                if (tiledMapToSlide[line] != null) {
+                    tiledMapToSlide[line].DrawFloorToSlide();
+                }
+            }
+            
             ninja.DrawKunai();
             
             floor.DrawLeftFloor();
             floor.DrawRightFloor();
             
-            ninja.DrawSould();
+            //ninja.DrawSould();
             //Only draw this sprite if the keyboard was not pressed, because after press it the
             //sprite animation is changed and its position is reseted
             if (!ninja.GetNinjaKeyboard().changeAnimation)

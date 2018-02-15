@@ -4,11 +4,15 @@ package Menus;
 //Jplay imports
 import jplay.GameImage;
 import jplay.Keyboard;
+import jplay.Sound;
 
 //Variables imports
 import static Main.Main.keyboard;
 import static Main.Main.mouse;
 import static Main.Main.window;
+
+//Others imports
+import com.sun.glass.events.KeyEvent;
 
 /**
  *
@@ -18,7 +22,9 @@ public class Menu {
     
     //Java variables
     private int line;
+    private final String BUTTON_FILE = "Sounds/Others/Button.wav";
     private final String FILE_WAY = "Images/Menu/";
+    
     
     //Jplay variables
     private final GameImage menu = new GameImage(FILE_WAY + "/Menu.png");
@@ -34,6 +40,8 @@ public class Menu {
     private final GameImage anterios = new GameImage(FILE_WAY + "Buttons/Anterios.png");
     private final GameImage proximo = new GameImage(FILE_WAY + "Buttons/Proximo.png");
     private final GameImage finalizar = new GameImage(FILE_WAY + "Buttons/Finalizar.png");
+    
+    private Sound button;
     
     public void Menu() {
         
@@ -87,17 +95,23 @@ public class Menu {
             
             if (mouse.isLeftButtonPressed()) {
                 if (mouse.isOverObject(jogar)) {
+                    button = new Sound(BUTTON_FILE);
+                    button.play();
                     isMenu = false;
                 } else if (mouse.isOverObject(tutorial)) {
+                    button = new Sound(BUTTON_FILE);
+                    button.play();
                     Tutorial();
                 } else if(mouse.isOverObject(sair)) {
+                    button = new Sound(BUTTON_FILE);
+                    button.play();
                     window.exit();
                 }
             }
             
             if (keyboard.keyDown(Keyboard.ESCAPE_KEY)) {
                 window.exit();
-            }
+            } else if (keyboard.keyDown(KeyEvent.VK_P)) {}
             
         }
         
@@ -124,8 +138,12 @@ public class Menu {
             
             if (mouse.isLeftButtonPressed()) {
                 if (mouse.isOverObject(anterios) && index > 0) {
+                    button = new Sound(BUTTON_FILE);
+                    button.play();
                     index--;
                 } else if (mouse.isOverObject(proximo) && index < 7) {
+                    button = new Sound(BUTTON_FILE);
+                    button.play();
                     index ++;
                 }
             }

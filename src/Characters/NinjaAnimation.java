@@ -54,7 +54,7 @@ public class NinjaAnimation extends Thread {
             //This 'ifs' is used to set the animation to 'running' after the sprite collision with the floor
             if (!isFalling && ninja.velocityY > 0) {
                 isFalling = true;
-            } else if(isFalling && !ninja.GetIsJumping()) {
+            } else if(isFalling && !ninja.GetIsJumping() && ninja.onFloor) {
                 //Set the animation to attack if the ninja collision with the floor during your attack animation
                 if (ninja.GetNinjaKeyboard().isJumpAttack || ninja.GetNinjaKeyboard().isJumpThrow) {
                     SetCorrectAnimationTransition();
@@ -75,7 +75,7 @@ public class NinjaAnimation extends Thread {
             }
             
             //Sets animation to running if the ninja collided with the floor and to do not stops gliding
-            if (ninja.GetNinjaKeyboard().isGliding && !ninja.GetIsJumping()) {
+            if (ninja.GetNinjaKeyboard().isGliding && !ninja.GetIsJumping() && ninja.onFloor) {
                 ninja.GetNinjaKeyboard().isGliding = false;
                 ninja.GetNinjaKeyboard().isRunning = true;
                 SetCorrectAnimation();

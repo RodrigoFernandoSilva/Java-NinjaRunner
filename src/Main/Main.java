@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Main;
 
 //Jplay imports
 import jplay.InputBase;
 import jplay.Keyboard;
 import jplay.Mouse;
+import jplay.Sound;
 import jplay.Window;
 
 //Classe imports
@@ -16,10 +13,12 @@ import Characters.CoinThread;
 import Characters.Enemy;
 import Characters.KunaiThead;
 import Characters.Ninja;
+import Characters.TiledMapToSlide;
+import Menus.Menu;
 import Menus.Playing;
 import Plataform.Floor;
 import Plataform.Water;
-import Menus.Menu;
+
 
 //Others imports
 import com.sun.glass.events.KeyEvent;
@@ -48,13 +47,13 @@ public class Main {
     public static Floor floor;
     public static Playing playing;
     public static SomeMethods someMethods;
+    public static TiledMapToSlide[] tiledMapToSlide;
     public static Water water;
     
     public static void main(String[] args) {
         
         Menu menu = new Menu();
         
-        //window = new Window(1280, 720);
         window = new Window(300, 400);
         mouse = window.getMouse();
         keyboard = window.getKeyboard();
@@ -68,6 +67,8 @@ public class Main {
         shortButton.y = longButton.y;
         shortButton.x = 183;
         
+        ImageIcon imageIcon = new ImageIcon("Images/Icon/Icon.png");
+        window.setIconImage(imageIcon.getImage());
         
         while (true) {
             
@@ -115,8 +116,9 @@ public class Main {
         DeltaTime deltaTime = new DeltaTime();
         deltaTime = new DeltaTime();
         
-        ImageIcon imageIcon = new ImageIcon("Images/Icon/Icon.png");
-        window.setIconImage(imageIcon.getImage());
+        Sound music = new Sound("Sounds/Music/Music.wav");
+        music.setRepeat(true);
+        music.play();
         
         boolean playAgain = false;
         while (isRunning) {
