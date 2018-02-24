@@ -265,11 +265,11 @@ public class Floor extends Thread {
                 objectX[objectLine] = (floorLeft[floorIndex].width / 2) + (generator.nextInt(64));
                 
             } else {
-                objectX[objectLine] = (floorLeft[floorIndex].width / 2) - (generator.nextInt(128) - 64);
+                objectX[objectLine] = (floorLeft[floorIndex].width / 2) - (generator.nextInt(128) - 256);
                 
                 if (generator.nextInt(10) < 7) {
                     objectLine ++;
-                    objectX[objectLine] = (floorLeft[floorIndex].width - 192) - (generator.nextInt(64));
+                    objectX[objectLine] = (floorLeft[floorIndex].width - 256) - (generator.nextInt(64));
                 }
                 
             }

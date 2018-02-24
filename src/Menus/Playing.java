@@ -138,17 +138,17 @@ public class Playing {
                 subSpeed = 1;
                 for (line = 0; line < backgroundSky.length; line ++) {
                     backgroundSky[line].x -= (speed * deltaTime) * subSpeed;
-                    if (line != 0)
-                        backgroundDarkSky[line].x -= (speed * deltaTime) * subSpeed;
                     subSpeed += 0.3;
                 }
-
-                //Reposition the background  after it exit the windows
+                
+                for (line = 0; line < backgroundSky.length; line ++) {
+                    backgroundDarkSky[line] = backgroundSky[line];
+                }
+                
+                //Reposition the background after it exit the windows
                 for (line = 0; line < backgroundSky.length; line ++) {
                     if (backgroundSky[line].x + (backgroundSky[line].width / 2) < 1) {
                         backgroundSky[line].x += (backgroundSky[line].width / 2);
-                        if (line != 0)
-                            backgroundDarkSky[line].x += (backgroundSky[line].width / 2);
                     }
                 }
             }

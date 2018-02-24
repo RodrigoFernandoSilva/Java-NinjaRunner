@@ -2,7 +2,6 @@
 package Characters;
 
 //Jplay imports
-import jplay.Sound;
 import jplay.Sprite;
 import jplay.Animation;
 
@@ -167,7 +166,7 @@ public class Ninja extends Characters {
                 
             //Ninja exit the windows or get in the floor
             } else if (soul.x + soul.width > floor.floorLeft[floor.GetFirstFloorId()].x) {
-                if (y > floor.y[floor.GetFirstFloorId()]) {
+                if (!ninjaKeyboard.changeAnimation && y > floor.y[floor.GetFirstFloorId()]) {
                     playing.isPlaying = false;
                 }
                 ninjaFloor = floor.GetFirstFloorY();
